@@ -25,14 +25,14 @@ type ServerCreateBody struct {
 	Recipe    string                `json:"recipe,omitempty"`
 	Keypairs  []string              `json:"keypairs,omitempty"`
 	Flavor    ServerFlavorBody      `json:"flavor"`
-	Storages  []ServerStorageBody   `json:"storages,omitempty"`
+	Storages  []ServerStorageBody   `json:"storages"`
 	Licenses  []ServerLicenseBody   `json:"licenses,omitempty"`
-	Addresses []ServerAddressesBody `json:"addresses,omitempty"`
+	Addresses []ServerAddressesBody `json:"addresses"`
 }
 
 type ServerAddressesBody struct {
-	External       bool   `json:"external,omitempty"`
-	DdosProtection bool   `json:"ddos_protection,omitempty"`
+	External       bool   `json:"external"`
+	DdosProtection bool   `json:"ddos_protection"`
 	WithFloating   bool   `json:"with_floating,omitempty"`
 	FloatingIpID   string `json:"floatingip_id,omitempty"`
 	Version        int    `json:"version"`
