@@ -1,110 +1,56 @@
 package servers
 
-import (
-	"encoding/json"
-	"github.com/clo-ru/cloapi-go-client/clo"
-	"io"
-)
+import "github.com/clo-ru/cloapi-go-client/clo"
 
-type ServerListResponse struct {
-	clo.Response
-	Count   int              `json:"count"`
-	Results []ServerListItem `json:"results"`
+type Server struct {
+	ID             string        `json:"id"`
+	Name           string        `json:"name"`
+	Status         string        `json:"status"`
+	CreatedIn      string        `json:"created_in"`
+	RescueMode     string        `json:"rescue_mode"`
+	Datacenter     string        `json:"datacenter"`
+	PrimaryAddress string        `json:"primary_address"`
+	Project        string        `json:"project"`
+	GuestAgent     bool          `json:"guest_agent"`
+	AdminKey       bool          `json:"admin_key_status"`
+	Flavor         ServerFlavor  `json:"flavor"`
+	Image          *ServerImage  `json:"image"`
+	Recipe         *ServerRecipe `json:"recipe"`
+	DiskData       []ServerDisk  `json:"disk_data"`
+	Addresses      []string      `json:"addresses"`
+	Snapshots      []string      `json:"snapshots"`
 }
 
-func (r *ServerListResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
+type ServerImage struct {
+	MinDisk  int    `json:"min_disk"`
+	MinRam   int    `json:"min_ram"`
+	MinVcpus int    `json:"min_vcpus"`
+	Name     string `json:"name"`
 }
 
-type ServerDetailResponse struct {
-	clo.Response
-	Result ServerDetailItem `json:"result"`
+type ServerRecipe struct {
+	MinDisk         int           `json:"min_disk"`
+	MinRam          int           `json:"min_ram"`
+	OperationSystem *ServerSystem `json:"operation_system"`
 }
 
-func (r *ServerDetailResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
+type ServerSystem struct {
+	Distribution string `json:"distribution"`
+	OsFamily     string `json:"os_family"`
+	Version      string `json:"version"`
 }
 
-type ServerListItem struct {
-	ID        string           `json:"id"`
-	ProjectID string           `json:"project_id"`
-	Name      string           `json:"name"`
-	Status    string           `json:"status"`
-	Image     string           `json:"image"`
-	Recipe    string           `json:"recipe"`
-	CreatedIn string           `json:"created_in"`
-	InRescue  string           `json:"in_rescue"`
-	Flavor    ServerFlavorData `json:"flavor"`
-	DiskData  []ServerDiskData `json:"disk_data"`
-	Links     []clo.Link       `json:"links"`
+type ServerFlavor struct {
+	Ram     int    `json:"ram"`
+	Vcpus   int    `json:"vcpus"`
+	Disk    int    `json:"disk"`
+	CpyType string `json:"cpu_type"`
 }
 
-type ServerDetailItem struct {
-	ID         string                `json:"id"`
-	Name       string                `json:"name"`
-	Image      string                `json:"image"`
-	Recipe     string                `json:"recipe"`
-	Status     string                `json:"status"`
-	CreatedIn  string                `json:"created_in"`
-	ProjectID  string                `json:"project_id"`
-	RescueMode string                `json:"rescue_mode"`
-	GuestAgent bool                  `json:"guest_agent"`
-	Flavor     ServerFlavorData      `json:"flavor"`
-	DiskData   []ServerDiskData      `json:"disk_data"`
-	Addresses  []ServerDetailAddress `json:"addresses"`
+type ServerDisk struct {
+	ID          string `json:"id"`
+	StorageType string `json:"storage_type"`
 }
 
-type ServerDetailAddress struct {
-	ID             string `json:"id"`
-	Ptr            string `json:"ptr"`
-	Name           string `json:"name"`
-	Type           string `json:"type"`
-	MacAddr        string `json:"mac_addr"`
-	Version        int    `json:"version"`
-	DdosProtection bool   `json:"ddos_protection"`
-	External       bool   `json:"external"`
-}
-
-type ServerCreateResponse struct {
-	clo.Response
-	Result ServerCreateItem `json:"result"`
-}
-
-func (r *ServerCreateResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
-}
-
-type ServerCreateItem struct {
-	ID        string           `json:"id"`
-	Image     string           `json:"image"`
-	Name      string           `json:"name"`
-	Status    string           `json:"status"`
-	CreatedIn string           `json:"created_in"`
-	Flavor    ServerFlavorData `json:"flavor"`
-	DiskData  []ServerDiskData `json:"disk_data"`
-	Links     []clo.Link       `json:"links"`
-}
-
-type ServerFlavorData struct {
-	Ram   int `json:"ram"`
-	Vcpus int `json:"vcpus"`
-}
-
-type ServerDiskData struct {
-	ID          string     `json:"id"`
-	StorageType string     `json:"storage_type"`
-	Links       []clo.Link `json:"links"`
-}
-
-type LicenseList struct {
-	Count int `json:"count"`
-}
+type ServerDetailResponse = clo.Response[Server]
+type ServerListResponse = clo.ListResponse[Server]

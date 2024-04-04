@@ -34,47 +34,47 @@ type defaultLogger struct {
 }
 
 func (l defaultLogger) Trace(v ...interface{}) {
-	l.logger.Print(v)
+	l.logger.Print(v...)
 }
 func (l defaultLogger) Info(v ...interface{}) {
-	l.logger.Print(v)
+	l.logger.Print(v...)
 }
 func (l defaultLogger) Warn(v ...interface{}) {
-	l.logger.Print(v)
+	l.logger.Print(v...)
 }
 func (l defaultLogger) Error(v ...interface{}) {
-	l.logger.Print(v)
+	l.logger.Print(v...)
 }
 func (l defaultLogger) Panic(v ...interface{}) {
-	l.logger.Panic(v)
+	l.logger.Panic(v...)
 }
 func (l defaultLogger) Traceln(v ...interface{}) {
-	l.logger.Println(v)
+	l.logger.Println(v...)
 }
 func (l defaultLogger) Infoln(v ...interface{}) {
-	l.logger.Println(v)
+	l.logger.Println(v...)
 }
 func (l defaultLogger) Warnln(v ...interface{}) {
-	l.logger.Println(v)
+	l.logger.Println(v...)
 }
 func (l defaultLogger) Errorln(v ...interface{}) {
-	l.logger.Println(v)
+	l.logger.Println(v...)
 }
 func (l defaultLogger) Panicln(v ...interface{}) {
-	l.logger.Panic(v)
+	l.logger.Panic(v...)
 }
 func (l defaultLogger) Tracef(format string, v ...interface{}) {
-	l.logger.Printf(format, v)
+	l.logger.Printf(format, v...)
 }
 func (l defaultLogger) Infof(format string, v ...interface{}) {
-	l.logger.Printf(format, v)
+	l.logger.Printf(format, v...)
 }
 func (l defaultLogger) Warnf(format string, v ...interface{}) {
-	l.logger.Printf(format, v)
+	l.logger.Printf(format, v...)
 }
 func (l defaultLogger) Errorf(format string, v ...interface{}) {
-	l.logger.Printf(format, v)
+	l.logger.Printf(format, v...)
 }
 func (l defaultLogger) Panicf(format string, v ...interface{}) {
-	l.logger.Panicf(format, v)
+	l.logger.Panicf(format, v...)
 }

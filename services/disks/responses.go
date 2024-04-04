@@ -1,117 +1,59 @@
 package disks
 
-import (
-	"encoding/json"
-	"github.com/clo-ru/cloapi-go-client/clo"
-	"io"
-)
+import "github.com/clo-ru/cloapi-go-client/clo"
 
-type LocalListResponse struct {
-	clo.Response
-	Count   int            `json:"count"`
-	Results []ResponseItem `json:"results"`
+type LocalDisk struct {
+	ID         string          `json:"id"`
+	Name       string          `json:"name"`
+	Status     string          `json:"status"`
+	Size       int             `json:"size"`
+	FileSystem string          `json:"file_system"`
+	CreatedIn  string          `json:"created_in"`
+	Bootable   string          `json:"bootable"`
+	Attachment *DiskAttachment `json:"attached_to_server"`
 }
 
-func (r *LocalListResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
+type Volume struct {
+	ID           string          `json:"id"`
+	Name         string          `json:"name"`
+	Status       string          `json:"status"`
+	Size         string          `json:"size"`
+	FileSystem   string          `json:"file_system"`
+	Description  string          `json:"description"`
+	CreatedIn    string          `json:"created_in"`
+	Bootable     bool            `json:"bootable"`
+	Undetachable bool            `json:"undetachable"`
+	Image        *VolumeImage    `json:"image"`
+	Recipe       *VolumeRecipe   `json:"recipe"`
+	Attachment   *DiskAttachment `json:"attached_to_server"`
+	Snapshots    []string        `json:"snapshots"`
 }
 
-type LocalDetailResponse struct {
-	clo.Response
-	Result ResponseItem `json:"result"`
+type VolumeImage struct {
+	MinDisk         int                    `json:"min_disk"`
+	MinRam          int                    `json:"min_ram"`
+	OperationSystem *VolumeOperationSystem `json:"operation_system"`
 }
 
-func (r *LocalDetailResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
+type VolumeRecipe struct {
+	Name     string `json:"name"`
+	MinDisk  int    `json:"min_disk"`
+	MinRam   int    `json:"min_ram"`
+	MinVcpus int    `json:"min_vcpus"`
 }
 
-type VolumeListResponse struct {
-	clo.Response
-	Count   int            `json:"count"`
-	Results []VolumeDetail `json:"results"`
+type VolumeOperationSystem struct {
+	Distribution string `json:"distribution"`
+	OsFamily     string `json:"os_family"`
+	Version      string `json:"version"`
 }
 
-func (r *VolumeListResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
+type DiskAttachment struct {
+	ID     string `json:"ID"`
+	Device string `json:"Device"`
 }
 
-type VolumeDetailResponse struct {
-	clo.Response
-	Result VolumeDetail `json:"result"`
-}
-
-func (r *VolumeDetailResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
-}
-
-type VolumeCreateResponse struct {
-	clo.Response
-	Result VolumeDetail `json:"result"`
-}
-
-func (r *VolumeCreateResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
-}
-
-type VolumeAttachResponse struct {
-	clo.Response
-	Result VolumeAttachItem `json:"result"`
-}
-
-func (r *VolumeAttachResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
-}
-
-type VolumeAttachItem struct {
-	Device     string             `json:"device"`
-	MountCmd   string             `json:"mount_cmd"`
-	Mountpoint string             `json:"mountpoint"`
-	Volume     VolumeAttachDetail `json:"volume"`
-	Server     AttachedToServer   `json:"server"`
-}
-
-type VolumeAttachDetail struct {
-	ID    string     `json:"id"`
-	Links []clo.Link `json:"links"`
-}
-
-type VolumeDetail struct {
-	ResponseItem
-	Undetachable bool   `json:"undetachable"`
-	Device       string `json:"device"`
-	Description  string `json:"description"`
-}
-
-type ResponseItem struct {
-	ID               string           `json:"id"`
-	Name             string           `json:"name"`
-	Status           string           `json:"status"`
-	CreatedIn        string           `json:"created_in"`
-	Size             int              `json:"size"`
-	Bootable         bool             `json:"bootable"`
-	AttachedToServer AttachedToServer `json:"attached_to_server"`
-	Links            []clo.Link       `json:"links"`
-}
-
-type AttachedToServer struct {
-	ID    string     `json:"id"`
-	Links []clo.Link `json:"links"`
-}
+type LocalDiskDetailResponse = clo.Response[LocalDisk]
+type LocalDiskListResponse = clo.ListResponse[LocalDisk]
+type VolumeDetailResponse = clo.Response[Volume]
+type VolumeListResponse = clo.ListResponse[Volume]

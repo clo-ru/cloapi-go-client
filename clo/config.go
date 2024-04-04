@@ -1,28 +1,34 @@
 package clo
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"time"
+)
 
 type Config struct {
-	AuthKey            string `json:"auth_key"`
-	BaseUrl            string `json:"base_url"`
-	HttpTimeoutSeconds int    `json:"http_timeout_seconds"`
+	AuthKey     string        `json:"auth_key"`
+	BaseUrl     string        `json:"base_url"`
+	HttpTimeout time.Duration `json:"http_timeout"`
 }
 
-func (cfg *Config) ToMap() map[string]interface{} {
-	return map[string]interface{}{
-		"auth_key": cfg.AuthKey,
-		"base_url": cfg.BaseUrl,
-		"timeout":  cfg.HttpTimeoutSeconds,
-	}
-}
-
-func (cfg *Config) FromMap(opt map[string]interface{}) error {
+func (cfg Config) FromMap(opt map[string]interface{}) error {
 	b, e := json.Marshal(opt)
 	if e != nil {
 		return e
 	}
-	if e := json.Unmarshal(b, cfg); e != nil {
+	if e := json.Unmarshal(b, &cfg); e != nil {
 		return e
+	}
+	return nil
+}
+
+func (cfg Config) Validate() error {
+	if len(cfg.BaseUrl) == 0 {
+		return fmt.Errorf("BaseUrl should be provided")
+	}
+	if len(cfg.AuthKey) == 0 {
+		return fmt.Errorf("AuthKey should be provided")
 	}
 	return nil
 }

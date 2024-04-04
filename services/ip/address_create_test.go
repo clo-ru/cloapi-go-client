@@ -1,162 +1,45 @@
 package ip
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/clo-ru/cloapi-go-client/clo"
 	"github.com/clo-ru/cloapi-go-client/clo/mocks"
-	"github.com/stretchr/testify/assert"
+	intTesting "github.com/clo-ru/cloapi-go-client/internal/testing"
 	"net/http"
-	"sync"
 	"testing"
 )
 
 func TestAddressCreateRequest_BuildRequest(t *testing.T) {
-	b := AddressCreateBody{
-		DdosProtection: true,
-	}
-	fID := "id"
-	req := AddressCreateRequest{
-		ProjectID: fID,
-		Body:      b,
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", mocks.MockAuthKey))
-	h.Add("Content-type", "application/json")
-	h.Add("X-Add-Some", "SomeHeaderValue")
-	rawReq, e := req.buildRequest(context.Background(), map[string]interface{}{
-		"auth_key": mocks.MockAuthKey,
-		"base_url": mocks.MockUrl,
-	})
-	rawReq.Header = h
-	assert.Nil(t, e)
-	bd := new(bytes.Buffer)
-	json.NewEncoder(bd).Encode(b)
-	expReq, _ := http.NewRequestWithContext(
-		context.Background(), http.MethodPost, mocks.MockUrl+fmt.Sprintf(addressCreateEndpoint, fID), bd,
-	)
-	expReq.Header = h
-	assert.Equal(t, expReq, rawReq)
+	b := AddressCreateBody{DdosProtection: true}
+	dID := "volume_id"
+	req := &AddressCreateRequest{Body: b, ProjectID: dID}
+	intTesting.BuildTest(req, http.MethodPost, fmt.Sprintf(addressCreateEndpoint, mocks.MockUrl, dID), b, t)
 }
 
 func TestAddressCreateRequest_Make(t *testing.T) {
-	httpCli := mocks.MockClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
+	intTesting.TestDoRequestCases(
+		t,
+		[]intTesting.DoTestCase{
+			{
+				Name: "Success",
+				BodyStringFunc: func() (string, int) {
+					return `{"result":{"id":"disk_id"}}`, http.StatusOK
+				},
+				Req:      &AddressCreateRequest{ProjectID: "project_id"},
+				Expected: &clo.ResponseCreated{Result: clo.IdResult{ID: "disk_id"}},
+				Actual:   &clo.ResponseCreated{},
+			},
+			{
+				Name:           "Error",
+				ShouldFail:     true,
+				CheckError:     true,
+				BodyStringFunc: func() (string, int) { return "", http.StatusInternalServerError },
+				Req:            &AddressCreateRequest{ProjectID: "project_id"},
+			},
 		},
-	}
-	var cases = []struct {
-		Name           string
-		ShouldFail     bool
-		CheckError     bool
-		Req            AddressCreateRequest
-		BodyStringFunc func() (string, int)
-		Expected       AddressCreateResponse
-	}{
-		{
-			Name: "Success",
-			BodyStringFunc: func() (string, int) {
-				return fmt.Sprintf(`{"result":{"id":"fipid","address":"192.168.1.1"}}`),
-					http.StatusOK
-			},
-			Req: AddressCreateRequest{
-				ProjectID: "id",
-			},
-			Expected: AddressCreateResponse{Result: AddressDetail{
-				ID:      "fipid",
-				Address: "192.168.1.1",
-			}},
-		},
-		{
-			Name:       "Error",
-			ShouldFail: true,
-			CheckError: true,
-			BodyStringFunc: func() (string, int) {
-				return "", http.StatusInternalServerError
-			},
-			Req: AddressCreateRequest{
-				ProjectID: "id",
-			},
-			Expected: AddressCreateResponse{Result: AddressDetail{}},
-		},
-	}
-	for _, c := range cases {
-		t.Run(c.Name, func(t *testing.T) {
-			mocks.BodyStringFunc = c.BodyStringFunc
-			res, e := c.Req.Make(context.Background(), &cli)
-			if !c.ShouldFail {
-				assert.Nil(t, e)
-				assert.Equal(t, c.Expected, res)
-			} else {
-				if c.CheckError {
-					assert.NotNil(t, e)
-				} else {
-					assert.NotEqual(t, c.Expected, res)
-				}
-			}
-		})
-	}
+	)
 }
 
 func TestAddressCreateRequest_MakeRetry(t *testing.T) {
-	retry := 5
-	erCode := http.StatusInternalServerError
-	httpCli := mocks.RequestDebugClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	mocks.BodyStringFunc = func() (string, int) {
-		return "", erCode
-	}
-	grNum := 4
-	wg := sync.WaitGroup{}
-	for n := 0; n < grNum; n++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			req := AddressCreateRequest{
-				Body: AddressCreateBody{
-					DdosProtection: true,
-				},
-			}
-			req.WithRetry(retry, 0)
-			_, _ = req.Make(context.Background(), &cli)
-		}()
-	}
-	wg.Wait()
-	assert.Equal(t, retry*grNum, httpCli.RequestCount)
-}
-
-func TestAddressCreateRequest_CheckPassedBody(t *testing.T) {
-	erCode := http.StatusInternalServerError
-	httpCli := mocks.RequestDebugClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	mocks.BodyStringFunc = func() (string, int) {
-		return "1", erCode
-	}
-	req := AddressCreateRequest{
-		Body: AddressCreateBody{
-			DdosProtection: true,
-		},
-	}
-	_, _ = req.Make(context.Background(), &cli)
-	exp := []byte(`{"ddos_protection":true}`)
-	exp = append(exp, '\n')
-
-	assert.Equal(t, exp, httpCli.Body)
+	intTesting.ConcurrentRetryTest(&AddressCreateRequest{}, t)
 }

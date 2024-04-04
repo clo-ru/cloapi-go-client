@@ -1,110 +1,40 @@
 package storage
 
 import (
-	"github.com/clo-ru/cloapi-go-client/clo"
-	"github.com/clo-ru/cloapi-go-client/clo/mocks"
-	"context"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"github.com/clo-ru/cloapi-go-client/clo/mocks"
+	intTesting "github.com/clo-ru/cloapi-go-client/internal/testing"
 	"net/http"
-	"sync"
 	"testing"
 )
 
 func TestS3UserDeleteRequest_BuildRequest(t *testing.T) {
 	ID := "id"
-	req := S3UserDeleteRequest{
+	req := &S3UserDeleteRequest{
 		UserID: ID,
 	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", mocks.MockAuthKey))
-	h.Add("Content-type", "application/json")
-	h.Add("X-Add-Some", "SomeHeaderValue")
-	rawReq, e := req.buildRequest(context.Background(), map[string]interface{}{
-		"auth_key": mocks.MockAuthKey,
-		"base_url": mocks.MockUrl,
-	})
-	rawReq.Header = h
-	assert.Nil(t, e)
-	expReq, _ := http.NewRequestWithContext(
-		context.Background(), http.MethodDelete, mocks.MockUrl+fmt.Sprintf(s3UserDeleteEndpoint, ID), nil,
-	)
-	expReq.Header = h
-	assert.Equal(t, expReq, rawReq)
+	intTesting.BuildTest(req, http.MethodDelete, fmt.Sprintf(s3UserDeleteEndpoint, mocks.MockUrl, ID), nil, t)
 }
 
 func TestS3UserDeleteRequest_Make(t *testing.T) {
-	httpCli := mocks.MockClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
+	intTesting.TestDoRequestCases(
+		t,
+		[]intTesting.DoTestCase{{
+			Name:           "Success",
+			BodyStringFunc: func() (string, int) { return "1", http.StatusOK },
+			Req:            &S3UserDeleteRequest{UserID: "1"},
 		},
-	}
-	var cases = []struct {
-		Name           string
-		ShouldFail     bool
-		CheckError     bool
-		Req            S3UserDeleteRequest
-		BodyStringFunc func() (string, int)
-	}{
-		{
-			Name: "Success",
-			BodyStringFunc: func() (string, int) {
-				return "1",
-					http.StatusOK
-			},
-			Req: S3UserDeleteRequest{UserID: "1"},
-		},
-		{
-			Name:       "Error",
-			ShouldFail: true,
-			CheckError: true,
-			BodyStringFunc: func() (string, int) {
-				return "", http.StatusInternalServerError
-			},
-			Req: S3UserDeleteRequest{UserID: "1"},
-		},
-	}
-	for _, c := range cases {
-		t.Run(c.Name, func(t *testing.T) {
-			mocks.BodyStringFunc = c.BodyStringFunc
-			e := c.Req.Make(context.Background(), &cli)
-			if !c.ShouldFail {
-				assert.Nil(t, e)
-			} else {
-				assert.NotNil(t, e)
-			}
-		})
-	}
+			{
+				Name:           "Error",
+				ShouldFail:     true,
+				CheckError:     true,
+				BodyStringFunc: func() (string, int) { return "", http.StatusInternalServerError },
+				Req:            &S3UserDeleteRequest{UserID: "1"},
+			}},
+	)
+
 }
 
 func TestS3UserDeleteRequest_MakeRetry(t *testing.T) {
-	retry := 5
-	erCode := http.StatusInternalServerError
-	httpCli := mocks.RequestDebugClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	mocks.BodyStringFunc = func() (string, int) {
-		return "", erCode
-	}
-	grNum := 4
-	wg := sync.WaitGroup{}
-	for n := 0; n < grNum; n++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			req := S3UserDeleteRequest{}
-			req.WithRetry(retry, 0)
-			_ = req.Make(context.Background(), &cli)
-		}()
-	}
-	wg.Wait()
-	assert.Equal(t, retry*grNum, httpCli.RequestCount)
+	intTesting.ConcurrentRetryTest(&S3UserDeleteRequest{}, t)
 }

@@ -1,29 +1,21 @@
 package recipe
 
-import (
-	"encoding/json"
-	"github.com/clo-ru/cloapi-go-client/clo"
-	"io"
-)
+import "github.com/clo-ru/cloapi-go-client/clo"
 
-type RecipeListResponse struct {
-	clo.Response
-	Count   int              `json:"count"`
-	Results []RecipeListItem `json:"results"`
+type LicenseRecipe struct {
+	Addon    string `json:"addon"`
+	Name     string `json:"name"`
+	Required bool   `json:"required"`
 }
 
-func (r *RecipeListResponse) FromJsonBody(body io.ReadCloser) error {
-	if e := json.NewDecoder(body).Decode(r); e != nil {
-		return e
-	}
-	return nil
+type Recipe struct {
+	ID                string          `json:"id"`
+	Name              string          `json:"name"`
+	MinDisk           int             `json:"min_disk"`
+	MinRam            int             `json:"min_ram"`
+	MinVcpus          int             `json:"min_vcpus"`
+	SuitableImages    []string        `json:"suitable_images"`
+	AvailableLicenses []LicenseRecipe `json:"available_licenses"`
 }
 
-type RecipeListItem struct {
-	ID             string   `json:"id"`
-	Name           string   `json:"name"`
-	MinDisk        int      `json:"min_disk"`
-	MinRam         int      `json:"min_ram"`
-	MinVcpus       int      `json:"min_vcpus"`
-	SuitableImages []string `json:"suitable_images"`
-}
+type RecipeListResponse = clo.ListResponse[Recipe]

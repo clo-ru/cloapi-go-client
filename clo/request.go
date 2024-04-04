@@ -1,17 +1,89 @@
 package clo
 
 import (
+	"bytes"
+	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 )
+
+type QueryParam map[string][]string
+
+type RequestInt interface {
+	RetryCount() int
+	RetryDelay() time.Duration
+	WithQueryParams(param QueryParam)
+	WithRetry(retry int, timeout time.Duration)
+	WithHeaders(headers http.Header)
+	WithLog(l Logger)
+
+	OnRetry(response *http.Response, err error, retryCount int)
+	Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error)
+}
+
+type FilterableRequest interface {
+	RequestInt
+	OrderBy(of string)
+	FilterBy(ff FilteringField)
+}
+
+type PaginatedRequest interface {
+	RequestInt
+	OrderBy(of string)
+	FilterBy(ff FilteringField)
+}
 
 type Request struct {
 	retry        int
 	retryTimeout time.Duration
 	log          Logger
 	headers      http.Header
-	queryParams  map[string][]string
+	queryParams  QueryParam
+}
+
+func (r *Request) RetryCount() int {
+	return r.retry
+}
+
+func (r *Request) RetryDelay() time.Duration {
+	return r.retryTimeout
+}
+
+func (r *Request) OnRetry(response *http.Response, err error, retryCount int) {
+	respCode := -1
+	respData := "<No Data>"
+	if response != nil {
+		respCode = response.StatusCode
+		buf := new(bytes.Buffer)
+		if _, err := buf.ReadFrom(response.Body); err != nil {
+			respData = "<Read Error>"
+		}
+		respData = buf.String()
+	}
+	if r.log != nil {
+		r.log.Errorf(
+			"%T error %s, the request will be retried %d more times: %d, body: %s\n",
+			*r, err, retryCount, respCode, respData,
+		)
+	}
+	return
+}
+
+func (r *Request) BuildRaw(ctx context.Context, method string, Url string, authToken string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx, method, Url, body)
+	if err != nil {
+		return nil, err
+	}
+	r.addUrlParams(req)
+	headers := r.ensureHeaders(req)
+
+	headers.Add("Content-type", "application/json")
+	if len(authToken) != 0 {
+		headers.Add("Authorization", fmt.Sprint("Bearer ", authToken))
+	}
+	return req, nil
 }
 
 func (r *Request) WithLog(l Logger) {
@@ -23,7 +95,7 @@ func (r *Request) WithRetry(retry int, timeout time.Duration) {
 	r.retryTimeout = timeout
 }
 
-func (r *Request) WithQueryParams(param map[string][]string) {
+func (r *Request) WithQueryParams(param QueryParam) {
 	if r.queryParams == nil {
 		r.queryParams = param
 	} else {
@@ -36,43 +108,11 @@ func (r *Request) WithQueryParams(param map[string][]string) {
 	}
 }
 
-func (r *Request) WithHeaders(headers map[string][]string) {
+func (r *Request) WithHeaders(headers http.Header) {
 	if r.headers == nil {
 		r.headers = map[string][]string{}
 	}
 	r.headers = headers
-}
-
-func (r *Request) MakeRequest(req *http.Request, cli *ApiClient) (*http.Response, error) {
-	r.addUrlParams(req)
-	r.addHeadersToReq(req)
-	if r.retry < 0 {
-		return nil, fmt.Errorf("retry number should be positive")
-	}
-	var (
-		rawResp      *http.Response
-		requestError error
-	)
-	for r.retry >= 0 {
-		rawResp, requestError = cli.MakeRequest(req)
-		if requestError == nil {
-			r.retry = -1
-			break
-		}
-		r.retry -= 1
-		if r.log != nil {
-			r.log.Errorf("%T error %s, the request will be retried %d more times\n",
-				*r, requestError.Error(), r.retry)
-		}
-		if r.retry == 0 {
-			break
-		}
-		time.Sleep(r.retryTimeout)
-	}
-	if requestError != nil {
-		return nil, requestError
-	}
-	return rawResp, nil
 }
 
 func (r *Request) addUrlParams(req *http.Request) {
@@ -85,10 +125,11 @@ func (r *Request) addUrlParams(req *http.Request) {
 	req.URL.RawQuery = rawQuery.Encode()
 }
 
-func (r *Request) addHeadersToReq(req *http.Request) {
-	req.Header = r.headers
-	if req.Header == nil {
+func (r *Request) ensureHeaders(req *http.Request) *http.Header {
+	if r.headers != nil {
+		req.Header = r.headers
+	} else {
 		req.Header = http.Header{}
 	}
-	req.Header.Add("Content-type", "application/json")
+	return &req.Header
 }

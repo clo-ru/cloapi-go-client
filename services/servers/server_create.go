@@ -1,16 +1,15 @@
 package servers
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/clo-ru/cloapi-go-client/clo"
+	tools "github.com/clo-ru/cloapi-go-client/clo/request_tools"
 	"net/http"
 )
 
 const (
-	serverCreateEndpoint = "/v1/projects/%s/servers"
+	serverCreateEndpoint = "%s/v2/projects/%s/servers"
 )
 
 type ServerCreateRequest struct {
@@ -20,22 +19,23 @@ type ServerCreateRequest struct {
 }
 
 type ServerCreateBody struct {
-	Name      string                `json:"name"`
-	Image     string                `json:"image"`
-	Recipe    string                `json:"recipe,omitempty"`
-	Keypairs  []string              `json:"keypairs,omitempty"`
-	Flavor    ServerFlavorBody      `json:"flavor"`
-	Storages  []ServerStorageBody   `json:"storages,omitempty"`
-	Licenses  []ServerLicenseBody   `json:"licenses,omitempty"`
-	Addresses []ServerAddressesBody `json:"addresses,omitempty"`
+	Name         string                `json:"name"`
+	Image        string                `json:"image,omitempty"`
+	Recipe       string                `json:"recipe,omitempty"`
+	SourceVolume string                `json:"volume,omitempty"`
+	Flavor       ServerFlavorBody      `json:"flavor"`
+	Storages     []ServerStorageBody   `json:"storages,omitempty"`
+	Licenses     []ServerLicenseBody   `json:"licenses,omitempty"`
+	Addresses    []ServerAddressesBody `json:"addresses"`
+	Keypairs     []string              `json:"keypairs,omitempty"`
 }
 
 type ServerAddressesBody struct {
 	External       bool   `json:"external,omitempty"`
 	DdosProtection bool   `json:"ddos_protection,omitempty"`
-	WithFloating   bool   `json:"with_floating,omitempty"`
-	FloatingIpID   string `json:"floatingip_id,omitempty"`
-	Version        int    `json:"version"`
+	AddressId      string `json:"address_id,omitempty"`
+	MaxBandwidth   int    `json:"bandwidth_max_mbps,omitempty"`
+	Version        int    `json:"version,omitempty"`
 }
 
 type ServerFlavorBody struct {
@@ -55,45 +55,15 @@ type ServerStorageBody struct {
 	StorageType string `json:"storage_type"`
 }
 
-func (r *ServerCreateRequest) Make(ctx context.Context, cli *clo.ApiClient) (ServerCreateResponse, error) {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return ServerCreateResponse{}, e
-	}
-	rawResp, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return ServerCreateResponse{}, requestError
-	}
-	defer rawResp.Body.Close()
-	var resp ServerCreateResponse
-	if e = resp.FromJsonBody(rawResp.Body); e != nil {
-		return ServerCreateResponse{}, e
-	}
-	return resp, nil
+func (r *ServerCreateRequest) Do(ctx context.Context, cli *clo.ApiClient) (*clo.ResponseCreated, error) {
+	res := &clo.ResponseCreated{}
+	return res, cli.DoRequest(ctx, r, res)
 }
 
-func (r *ServerCreateRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
+func (r *ServerCreateRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	body, err := tools.StructToReader(r.Body)
+	if err != nil {
+		return nil, err
 	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(serverCreateEndpoint, r.ProjectID)
-	b := new(bytes.Buffer)
-	if e := json.NewEncoder(b).Encode(r.Body); e != nil {
-		return nil, fmt.Errorf("can't encode body parameters, %s", e.Error())
-	}
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodPost, baseUrl, b,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+	return r.BuildRaw(ctx, http.MethodPost, fmt.Sprintf(serverCreateEndpoint, baseUrl, r.ProjectID), authToken, body)
 }

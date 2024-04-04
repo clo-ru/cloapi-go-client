@@ -1,136 +1,42 @@
 package storage
 
 import (
-	"github.com/clo-ru/cloapi-go-client/clo"
-	"github.com/clo-ru/cloapi-go-client/clo/mocks"
-	"context"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"github.com/clo-ru/cloapi-go-client/clo/mocks"
+	intTesting "github.com/clo-ru/cloapi-go-client/internal/testing"
 	"net/http"
-	"sync"
 	"testing"
 )
 
 func TestS3KeysGetRequest_BuildRequest(t *testing.T) {
 	ID := "id"
-	req := S3KeysGetRequest{
-		UserID: ID,
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", mocks.MockAuthKey))
-	h.Add("Content-type", "application/json")
-	h.Add("X-Add-Some", "SomeHeaderValue")
-	rawReq, e := req.buildRequest(context.Background(), map[string]interface{}{
-		"auth_key": mocks.MockAuthKey,
-		"base_url": mocks.MockUrl,
-	})
-	rawReq.Header = h
-	assert.Nil(t, e)
-	expReq, _ := http.NewRequestWithContext(
-		context.Background(), http.MethodGet, mocks.MockUrl+fmt.Sprintf(s3KeysGetEndpoint, ID), nil,
-	)
-	expReq.Header = h
-	assert.Equal(t, expReq, rawReq)
+	req := &S3KeysGetRequest{UserID: ID}
+	intTesting.BuildTest(req, http.MethodGet, fmt.Sprintf(s3KeysGetEndpoint, mocks.MockUrl, ID), nil, t)
 }
 
 func TestS3KeysGetRequest_Make(t *testing.T) {
-	httpCli := mocks.MockClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	var cases = []struct {
-		Name           string
-		ShouldFail     bool
-		CheckError     bool
-		Req            S3KeysGetRequest
-		BodyStringFunc func() (string, int)
-		Expected       S3KeysGetResponse
-	}{
-		{
-			Name: "Success",
-			BodyStringFunc: func() (string, int) {
-				return fmt.Sprintf(`{"result":{"user":"user_id","access_key":"aKey","secret_key":"secKey"}}`),
-					http.StatusOK
+	intTesting.TestDoRequestCases(
+		t,
+		[]intTesting.DoTestCase{
+			{
+				Name: "Success",
+				BodyStringFunc: func() (string, int) {
+					return `{"result":[{"access_key":"aKey","secret_key":"secKey"}], "count": 1}`, http.StatusOK
+				},
+				Req:      &S3KeysGetRequest{},
+				Expected: &S3KeysGetResponse{Result: []S3Key{{AccessKey: "aKey", SecretKey: "secKey"}}, Count: 1},
+				Actual:   &S3KeysGetResponse{},
 			},
-			Req: S3KeysGetRequest{},
-			Expected: S3KeysGetResponse{Result: S3KeysResponse{
-				User:      "user_id",
-				AccessKey: "aKey",
-				SecretKey: "secKey",
+			{
+				Name:           "Error",
+				ShouldFail:     true,
+				CheckError:     true,
+				BodyStringFunc: func() (string, int) { return "", http.StatusInternalServerError },
+				Req:            &S3KeysGetRequest{},
 			}},
-		},
-		{
-			Name:       "WrongAccessKeyReturned",
-			ShouldFail: true,
-			BodyStringFunc: func() (string, int) {
-				return fmt.Sprintf(`{"result":{"user":"user_id","access_key":"acessKey","secret_key":"secKey"}}`),
-					http.StatusOK
-			},
-			Req: S3KeysGetRequest{},
-			Expected: S3KeysGetResponse{Result: S3KeysResponse{
-				User:      "user_id",
-				AccessKey: "aKey",
-				SecretKey: "secKey",
-			}},
-		},
-		{
-			Name:       "Error",
-			ShouldFail: true,
-			CheckError: true,
-			BodyStringFunc: func() (string, int) {
-				return "", http.StatusInternalServerError
-			},
-			Req:      S3KeysGetRequest{},
-			Expected: S3KeysGetResponse{},
-		},
-	}
-	for _, c := range cases {
-		t.Run(c.Name, func(t *testing.T) {
-			mocks.BodyStringFunc = c.BodyStringFunc
-			res, e := c.Req.Make(context.Background(), &cli)
-			if !c.ShouldFail {
-				assert.Nil(t, e)
-				assert.Equal(t, c.Expected, res)
-			} else {
-				if c.CheckError {
-					assert.NotNil(t, e)
-				} else {
-					assert.NotEqual(t, c.Expected, res)
-				}
-			}
-		})
-	}
+	)
 }
 
 func TestS3KeysGetRequest_MakeRetry(t *testing.T) {
-	retry := 5
-	erCode := http.StatusInternalServerError
-	httpCli := mocks.RequestDebugClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	mocks.BodyStringFunc = func() (string, int) {
-		return "", erCode
-	}
-	grNum := 4
-	wg := sync.WaitGroup{}
-	for n := 0; n < grNum; n++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			req := S3KeysGetRequest{}
-			req.WithRetry(retry, 0)
-			_, _ = req.Make(context.Background(), &cli)
-		}()
-	}
-	wg.Wait()
-	assert.Equal(t, retry*grNum, httpCli.RequestCount)
+	intTesting.ConcurrentRetryTest(&S3KeysGetRequest{}, t)
 }

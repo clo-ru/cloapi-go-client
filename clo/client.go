@@ -1,6 +1,7 @@
 package clo
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/clo-ru/cloapi-go-client/clo/request_tools"
@@ -9,66 +10,96 @@ import (
 	"time"
 )
 
+type HttpClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+type ResponseUnmarshaler func(body io.Reader, dst any) error
+
 type ApiClient struct {
 	HttpClient HttpClient
 	Log        Logger
-	Options    map[string]interface{}
+	conf       Config
+	Unmarshall ResponseUnmarshaler
 }
 
 func NewDefaultClient(authKey string, baseUrl string) (*ApiClient, error) {
-	if len(authKey) == 0 {
-		return nil, fmt.Errorf("authKey should not be empty")
-	}
-	if len(baseUrl) == 0 {
-		return nil, fmt.Errorf("baseUrl should not be empty")
-	}
-	s := ApiClient{HttpClient: http.DefaultClient}
-	s.Options = map[string]interface{}{
-		"auth_key": authKey,
-		"base_url": baseUrl,
-	}
-	return &s, nil
+	return NewDefaultClientFromConfig(Config{AuthKey: authKey, BaseUrl: baseUrl})
 }
 
 func NewDefaultClientFromConfig(cfg Config) (*ApiClient, error) {
-	if len(cfg.BaseUrl) == 0 {
-		return nil, fmt.Errorf("Config.BaseUrl should be provided")
-	}
-	if len(cfg.AuthKey) == 0 {
-		return nil, fmt.Errorf("Config.AuthKey should be provided")
+	if err := cfg.Validate(); err != nil {
+		return nil, err
 	}
 	cli := http.DefaultClient
-	cli.Timeout = time.Duration(cfg.HttpTimeoutSeconds) * time.Second
-	s := ApiClient{
+	cli.Timeout = cfg.HttpTimeout
+	s := &ApiClient{
 		HttpClient: http.DefaultClient,
-		Options:    cfg.ToMap(),
+		conf:       cfg,
+		Unmarshall: UnmarshallJsonResponse,
 	}
-	return &s, nil
+	return s, nil
 }
 
-func (cli *ApiClient) MakeRequest(req *http.Request) (*http.Response, error) {
-	resp, e := cli.HttpClient.Do(req)
-	if cli.Log != nil {
-		cli.Log.Tracef("resp: %v, err: %v\n", resp, e)
+func (cli *ApiClient) DoRequest(ctx context.Context, req RequestInt, resp ResponseInterface) (err error) {
+	retryCount := req.RetryCount()
+	retryDelay := req.RetryDelay()
+	if retryCount < 0 {
+		return fmt.Errorf("retry number should be positive")
 	}
-	if e != nil {
-		return nil, e
+
+	rawReq, err := req.Build(ctx, cli.conf.BaseUrl, cli.conf.AuthKey)
+	if err != nil {
+		return err
 	}
-	if request_tools.IsError(resp.StatusCode) {
-		var de request_tools.DefaultError
-		defer resp.Body.Close()
-		e = json.NewDecoder(resp.Body).Decode(&de)
-		switch {
-		case e == io.EOF:
-			return nil, fmt.Errorf("error with an empty body, status code is : %d", resp.StatusCode)
-		case e != nil:
-			return nil, fmt.Errorf("can't decode an error body: %v", resp.Body)
+
+	var rawResp *http.Response
+	for {
+		rawResp, err = cli.HttpClient.Do(rawReq)
+		if cli.Log != nil {
+			cli.Log.Tracef("resp: %v, err: %v\n", rawResp, err)
 		}
-		return nil, de
+		if err == nil {
+			if rawResp.StatusCode < 500 {
+				return cli.parseResponse(rawResp, resp)
+			}
+			err = cli.parseErrorResponse(rawResp)
+		}
+		retryCount -= 1
+		req.OnRetry(rawResp, err, retryCount)
+		if retryCount <= 0 {
+			break
+		}
+		if retryDelay > 0 {
+			time.Sleep(retryDelay)
+		}
+
 	}
-	return resp, nil
+	return err
 }
 
-type HttpClient interface {
-	Do(req *http.Request) (*http.Response, error)
+func (cli *ApiClient) parseResponse(resp *http.Response, dst ResponseInterface) error {
+	defer resp.Body.Close()
+	if request_tools.IsError(resp.StatusCode) {
+		return cli.parseErrorResponse(resp)
+	}
+	if dst != nil {
+		err := cli.Unmarshall(resp.Body, dst)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (cli *ApiClient) parseErrorResponse(resp *http.Response) error {
+	var de request_tools.DefaultError
+	defer resp.Body.Close()
+	err := json.NewDecoder(resp.Body).Decode(&de)
+	switch {
+	case err == io.EOF:
+		return fmt.Errorf("error with an empty body, status code is : %d", resp.StatusCode)
+	case err != nil:
+		return fmt.Errorf("can't decode an error body: %v", resp.Body)
+	}
+	return de
 }

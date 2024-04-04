@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	s3UserSuspendEndpoint = "/v1/s3_users/%s/suspend"
+	s3UserSuspendEndpoint = "%s/v2/s3/users/%s/suspend"
 )
 
 type S3UserSuspendRequest struct {
@@ -16,41 +16,10 @@ type S3UserSuspendRequest struct {
 	UserID string
 }
 
-func (r *S3UserSuspendRequest) Make(ctx context.Context, cli *clo.ApiClient) (S3UserSuspendResponse, error) {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return S3UserSuspendResponse{}, e
-	}
-	rawResp, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return S3UserSuspendResponse{}, requestError
-	}
-	defer rawResp.Body.Close()
-	var resp S3UserSuspendResponse
-	if e = resp.FromJsonBody(rawResp.Body); e != nil {
-		return S3UserSuspendResponse{}, e
-	}
-	return resp, nil
+func (r *S3UserSuspendRequest) Do(ctx context.Context, cli *clo.ApiClient) error {
+	return cli.DoRequest(ctx, r, nil)
 }
 
-func (r *S3UserSuspendRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
-	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(s3UserSuspendEndpoint, r.UserID)
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodPost, baseUrl, nil,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+func (r *S3UserSuspendRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	return r.BuildRaw(ctx, http.MethodPost, fmt.Sprintf(s3UserSuspendEndpoint, baseUrl, r.UserID), authToken, nil)
 }

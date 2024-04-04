@@ -1,14 +1,14 @@
 package servers
 
 import (
-	"github.com/clo-ru/cloapi-go-client/clo"
 	"context"
 	"fmt"
+	"github.com/clo-ru/cloapi-go-client/clo"
 	"net/http"
 )
 
 const (
-	serverStopEndpoint = "/v1/servers/%s/stop"
+	serverStopEndpoint = "%s/v2/servers/%s/stop"
 )
 
 type ServerStopRequest struct {
@@ -16,36 +16,10 @@ type ServerStopRequest struct {
 	ServerID string
 }
 
-func (r *ServerStopRequest) Make(ctx context.Context, cli *clo.ApiClient) error {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return e
-	}
-	_, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return requestError
-	}
-	return nil
+func (r *ServerStopRequest) Do(ctx context.Context, cli *clo.ApiClient) error {
+	return cli.DoRequest(ctx, r, nil)
 }
 
-func (r *ServerStopRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
-	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(serverStopEndpoint, r.ServerID)
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodPost, baseUrl, nil,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+func (r *ServerStopRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	return r.BuildRaw(ctx, http.MethodPost, fmt.Sprintf(serverStopEndpoint, baseUrl, r.ServerID), authToken, nil)
 }

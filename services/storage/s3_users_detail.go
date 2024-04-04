@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	s3UserDetailEndpoint = "/v1/s3_users/%s"
+	s3UserDetailEndpoint = "%s/v2/s3/users/%s"
 )
 
 type S3UserDetailRequest struct {
@@ -16,41 +16,11 @@ type S3UserDetailRequest struct {
 	UserID string
 }
 
-func (r *S3UserDetailRequest) Make(ctx context.Context, cli *clo.ApiClient) (S3UserDetailResponse, error) {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return S3UserDetailResponse{}, e
-	}
-	rawResp, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return S3UserDetailResponse{}, requestError
-	}
-	defer rawResp.Body.Close()
-	var resp S3UserDetailResponse
-	if e = resp.FromJsonBody(rawResp.Body); e != nil {
-		return S3UserDetailResponse{}, e
-	}
-	return resp, nil
+func (r *S3UserDetailRequest) Do(ctx context.Context, cli *clo.ApiClient) (*S3UserDetailResponse, error) {
+	resp := &S3UserDetailResponse{}
+	return resp, cli.DoRequest(ctx, r, resp)
 }
 
-func (r *S3UserDetailRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
-	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(s3UserDetailEndpoint, r.UserID)
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodGet, baseUrl, nil,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+func (r *S3UserDetailRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	return r.BuildRaw(ctx, http.MethodGet, fmt.Sprintf(s3UserDetailEndpoint, baseUrl, r.UserID), authToken, nil)
 }

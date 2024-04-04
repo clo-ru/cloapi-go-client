@@ -1,69 +1,31 @@
 package servers
 
 import (
-	"bytes"
-	"github.com/clo-ru/cloapi-go-client/clo"
-	"github.com/clo-ru/cloapi-go-client/clo/mocks"
-	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"github.com/clo-ru/cloapi-go-client/clo/mocks"
+	intTesting "github.com/clo-ru/cloapi-go-client/internal/testing"
 	"net/http"
-	"sync"
 	"testing"
 )
 
 func TestServerResizeRequest_BuildRequest(t *testing.T) {
-	b := ServerResizeBody{}
 	ID := "id"
-	req := ServerResizeRequest{
-		Body:     b,
-		ServerID: ID,
-	}
-	rawReq, e := req.buildRequest(context.Background(), map[string]interface{}{
-		"auth_key": mocks.MockAuthKey,
-		"base_url": mocks.MockUrl,
-	})
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", mocks.MockAuthKey))
-	h.Add("Content-type", "application/json")
-	h.Add("X-Add-Some", "SomeHeaderValue")
-	rawReq.Header = h
-	assert.Nil(t, e)
-	bd := new(bytes.Buffer)
-	json.NewEncoder(bd).Encode(b)
-	expReq, _ := http.NewRequestWithContext(
-		context.Background(), http.MethodPost, mocks.MockUrl+fmt.Sprintf(serverResizeEndpoint, ID), bd,
-	)
-	expReq.Header = h
-	assert.Equal(t, expReq, rawReq)
+	body := ServerResizeBody{Ram: 1, Vcpus: 2}
+	req := &ServerResizeRequest{ServerID: ID, Body: body}
+	intTesting.BuildTest(req, http.MethodPost, fmt.Sprintf(serverResizeEndpoint, mocks.MockUrl, ID), body, t)
+
+}
+
+func TestServerResizeRequest_MakeRetry(t *testing.T) {
+	intTesting.ConcurrentRetryTest(&ServerResizeRequest{}, t)
 }
 
 func TestServerResizeRequest_Make(t *testing.T) {
-	httpCli := mocks.MockClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	var cases = []struct {
-		Name           string
-		ShouldFail     bool
-		CheckError     bool
-		Req            ServerResizeRequest
-		BodyStringFunc func() (string, int)
-	}{
+	cases := []intTesting.DoTestCase{
 		{
-			Name: "Success",
-			BodyStringFunc: func() (string, int) {
-				return "1",
-					http.StatusAccepted
-			},
-			Req: ServerResizeRequest{
-				ServerID: "id",
-			},
+			Name:           "Success",
+			BodyStringFunc: func() (string, int) { return "1", http.StatusAccepted },
+			Req:            &ServerResizeRequest{ServerID: "id"},
 		},
 		{
 			Name:       "Error",
@@ -72,77 +34,8 @@ func TestServerResizeRequest_Make(t *testing.T) {
 			BodyStringFunc: func() (string, int) {
 				return "", http.StatusInternalServerError
 			},
-			Req: ServerResizeRequest{
-				ServerID: "id",
-			},
+			Req: &ServerResizeRequest{ServerID: "id"},
 		},
 	}
-	for _, c := range cases {
-		t.Run(c.Name, func(t *testing.T) {
-			mocks.BodyStringFunc = c.BodyStringFunc
-			e := c.Req.Make(context.Background(), &cli)
-			if !c.ShouldFail {
-				assert.Nil(t, e)
-			} else {
-				assert.NotNil(t, e)
-			}
-		})
-	}
-}
-
-func TestServerResizeRequest_MakeRetry(t *testing.T) {
-	retry := 5
-	erCode := http.StatusInternalServerError
-	httpCli := mocks.RequestDebugClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	mocks.BodyStringFunc = func() (string, int) {
-		return "", erCode
-	}
-	grNum := 4
-	wg := sync.WaitGroup{}
-	for n := 0; n < grNum; n++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			req := ServerResizeRequest{}
-			req.WithRetry(retry, 0)
-			_ = req.Make(context.Background(), &cli)
-		}()
-	}
-	wg.Wait()
-	assert.Equal(t, retry*grNum, httpCli.RequestCount)
-}
-
-func TestServerResizeRequest_CheckPassedBody(t *testing.T) {
-	erCode := http.StatusInternalServerError
-	httpCli := mocks.RequestDebugClient{}
-	cli := clo.ApiClient{
-		HttpClient: &httpCli,
-		Options: map[string]interface{}{
-			"auth_key": "secret",
-			"base_url": "https://clo.ru",
-		},
-	}
-	mocks.BodyStringFunc = func() (string, int) {
-		return "1", erCode
-	}
-	req := ServerResizeRequest{
-		Body: ServerResizeBody{
-			Ram:   2,
-			Vcpus: 3,
-		}}
-	_ = req.Make(context.Background(), &cli)
-	exp := []byte(`{"ram":2,"vcpus":3}`)
-	exp = append(exp, '\n')
-	assert.Equal(t, exp, httpCli.Body)
-
-	exp = []byte(`{"ram":3,"vcpus":3}`)
-	exp = append(exp, '\n')
-	assert.NotEqual(t, exp, httpCli.Body)
+	intTesting.TestDoRequestCases(t, cases)
 }

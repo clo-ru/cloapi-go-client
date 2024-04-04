@@ -1,16 +1,15 @@
 package servers
 
 import (
-	"bytes"
-	"github.com/clo-ru/cloapi-go-client/clo"
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/clo-ru/cloapi-go-client/clo"
+	tools "github.com/clo-ru/cloapi-go-client/clo/request_tools"
 	"net/http"
 )
 
 const (
-	serverChangePasswdEndpoint = "/v1/servers/%s/password"
+	serverChangePasswdEndpoint = "%s/v2/servers/%s/password"
 )
 
 type ServerChangePasswdRequest struct {
@@ -23,40 +22,14 @@ type ServerChangePasswdBody struct {
 	Password string `json:"password"`
 }
 
-func (r *ServerChangePasswdRequest) Make(ctx context.Context, cli *clo.ApiClient) error {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return e
-	}
-	_, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return requestError
-	}
-	return nil
+func (r *ServerChangePasswdRequest) Do(ctx context.Context, cli *clo.ApiClient) error {
+	return cli.DoRequest(ctx, r, nil)
 }
 
-func (r *ServerChangePasswdRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
+func (r *ServerChangePasswdRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	body, err := tools.StructToReader(r.Body)
+	if err != nil {
+		return nil, err
 	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(serverChangePasswdEndpoint, r.ServerID)
-	b := new(bytes.Buffer)
-	if e := json.NewEncoder(b).Encode(r.Body); e != nil {
-		return nil, fmt.Errorf("can't encode body parameters, %s", e.Error())
-	}
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodPost, baseUrl, b,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+	return r.BuildRaw(ctx, http.MethodPost, fmt.Sprintf(serverChangePasswdEndpoint, baseUrl, r.ServerID), authToken, body)
 }

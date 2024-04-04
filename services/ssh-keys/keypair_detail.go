@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	keypairDetailEndpoint = "/v1/keypairs/%s/detail"
+	keypairDetailEndpoint = "%s/v2/keypairs/%s/detail"
 )
 
 type KeyPairDetailRequest struct {
@@ -16,41 +16,11 @@ type KeyPairDetailRequest struct {
 	KeypairID string
 }
 
-func (r *KeyPairDetailRequest) Make(ctx context.Context, cli *clo.ApiClient) (KeyPairDetailResponse, error) {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return KeyPairDetailResponse{}, e
-	}
-	rawResp, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return KeyPairDetailResponse{}, requestError
-	}
-	defer rawResp.Body.Close()
-	var resp KeyPairDetailResponse
-	if e = resp.FromJsonBody(rawResp.Body); e != nil {
-		return KeyPairDetailResponse{}, e
-	}
-	return resp, nil
+func (r *KeyPairDetailRequest) Do(ctx context.Context, cli *clo.ApiClient) (*KeyPairDetailResponse, error) {
+	resp := &KeyPairDetailResponse{}
+	return resp, cli.DoRequest(ctx, r, resp)
 }
 
-func (r *KeyPairDetailRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
-	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(keypairDetailEndpoint, r.KeypairID)
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodGet, baseUrl, nil,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+func (r *KeyPairDetailRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	return r.BuildRaw(ctx, http.MethodGet, fmt.Sprintf(keypairDetailEndpoint, baseUrl, r.KeypairID), authToken, nil)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	addressDetachEndpoint = "/v1/addresses/%s/detach"
+	addressDetachEndpoint = "%s/v2/addresses/%s/detach"
 )
 
 type AddressDetachRequest struct {
@@ -16,41 +16,10 @@ type AddressDetachRequest struct {
 	AddressID string
 }
 
-func (r *AddressDetachRequest) Make(ctx context.Context, cli *clo.ApiClient) (AddressDetachResponse, error) {
-	rawReq, e := r.buildRequest(ctx, cli.Options)
-	if e != nil {
-		return AddressDetachResponse{}, e
-	}
-	rawResp, requestError := r.MakeRequest(rawReq, cli)
-	if requestError != nil {
-		return AddressDetachResponse{}, requestError
-	}
-	defer rawResp.Body.Close()
-	var resp AddressDetachResponse
-	if e = resp.FromJsonBody(rawResp.Body); e != nil {
-		return AddressDetachResponse{}, e
-	}
-	return resp, nil
+func (r *AddressDetachRequest) Do(ctx context.Context, cli *clo.ApiClient) error {
+	return cli.DoRequest(ctx, r, nil)
 }
 
-func (r *AddressDetachRequest) buildRequest(ctx context.Context, cliOptions map[string]interface{}) (*http.Request, error) {
-	authKey, ok := cliOptions["auth_key"].(string)
-	if !ok {
-		return nil, fmt.Errorf("auth_key client options should be a string, %T got", authKey)
-	}
-	baseUrl, ok := cliOptions["base_url"].(string)
-	if !ok {
-		return nil, fmt.Errorf("base_url client options should be a string, %T got", baseUrl)
-	}
-	baseUrl += fmt.Sprintf(addressDetachEndpoint, r.AddressID)
-	rawReq, e := http.NewRequestWithContext(
-		ctx, http.MethodPost, baseUrl, nil,
-	)
-	if e != nil {
-		return nil, e
-	}
-	h := http.Header{}
-	h.Add("Authorization", fmt.Sprintf("Bearer %s", authKey))
-	r.WithHeaders(h)
-	return rawReq, nil
+func (r *AddressDetachRequest) Build(ctx context.Context, baseUrl string, authToken string) (*http.Request, error) {
+	return r.BuildRaw(ctx, http.MethodPost, fmt.Sprintf(addressDetachEndpoint, baseUrl, r.AddressID), authToken, nil)
 }

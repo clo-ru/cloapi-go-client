@@ -2,11 +2,11 @@ package mocks
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"sync/atomic"
 )
 
 const (
@@ -17,31 +17,36 @@ const (
 var BodyStringFunc func() (string, int)
 
 type MockClient struct {
-	RequestCount int
+	requestCount atomic.Int32
 }
 
 func (mc *MockClient) Do(req *http.Request) (*http.Response, error) {
-	mc.RequestCount++
+	mc.requestCount.Add(1)
 	var bodyString string
 	var statusCode int
+	var body io.ReadCloser = nil
 	bodyString, statusCode = BodyStringFunc()
-	if len(bodyString) == 0 {
-		return nil, fmt.Errorf(http.StatusText(statusCode))
-	}
-	body := ioutil.NopCloser(bytes.NewReader([]byte(bodyString)))
+	//if len(bodyString) != 0 {
+	//
+	//}
+	body = ioutil.NopCloser(bytes.NewReader([]byte(bodyString)))
 	return &http.Response{StatusCode: statusCode, Body: body}, nil
 }
 
-//RequestDebugClient is useful when you want to discover the passed URL and parameters
+func (mc *MockClient) RequestCount() int {
+	return int(mc.requestCount.Load())
+}
+
+// RequestDebugClient is useful when you want to discover the passed URL and parameters
 type RequestDebugClient struct {
-	RequestCount int
+	requestCount atomic.Int32
 	URL          url.URL
 	Headers      http.Header
 	Body         []byte
 }
 
 func (rdc *RequestDebugClient) Do(req *http.Request) (*http.Response, error) {
-	rdc.RequestCount++
+	rdc.requestCount.Add(1)
 	rdc.URL = *req.URL
 	rdc.Headers = req.Header
 	var e error
@@ -55,14 +60,17 @@ func (rdc *RequestDebugClient) Do(req *http.Request) (*http.Response, error) {
 	}
 	var bodyString string
 	var statusCode int
+	var body io.ReadCloser = nil
 	bodyString, statusCode = BodyStringFunc()
-	if len(bodyString) == 0 {
-		return nil, fmt.Errorf(http.StatusText(statusCode))
-	}
-	body := ioutil.NopCloser(bytes.NewReader([]byte(bodyString)))
+	body = ioutil.NopCloser(bytes.NewReader([]byte(bodyString)))
+	//if len(bodyString) != 0 {
+	//	body = ioutil.NopCloser(bytes.NewReader([]byte(bodyString)))
+	//}
 	return &http.Response{StatusCode: statusCode, Body: body}, nil
 }
-
+func (rdc *RequestDebugClient) RequestCount() int {
+	return int(rdc.requestCount.Load())
+}
 func CheckHeaders(headers map[string][]string) bool {
 	if _, ok := headers["Authorization"]; !ok {
 		return false
