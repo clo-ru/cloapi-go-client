@@ -6,16 +6,8 @@ stages:
 test:
   stage: test
   script:
-    - ls -la
-    - go get github.com/boumenot/gocover-cobertura
     - go fmt $(go list ./... | grep -v /vendor/)
     - go vet $(go list ./... | grep -v /vendor/)
-    - go test -coverprofile=coverage.txt -covermode count $(go list ./... | grep -v /vendor/)
-    - $GOPATH/bin/gocover-cobertura < coverage.txt > coverage.xml
-  coverage:  '/^coverage: (\d+.\d+)% of statements$/'
-
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
+    - go test -race -v -cover -coverprofile=profile.cov $(go list ./... | grep -v /vendor/)
+    - go tool cover -func profile.cov
+  coverage:  '\(statements\)(?:\s+)?(\d+(?:\.\d+)?%)'
