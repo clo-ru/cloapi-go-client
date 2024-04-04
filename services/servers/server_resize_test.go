@@ -2,8 +2,8 @@ package servers
 
 import (
 	"fmt"
-	"github.com/clo-ru/cloapi-go-client/clo/mocks"
 	intTesting "github.com/clo-ru/cloapi-go-client/internal/testing"
+	"github.com/clo-ru/cloapi-go-client/internal/testing/mocks"
 	"net/http"
 	"testing"
 )

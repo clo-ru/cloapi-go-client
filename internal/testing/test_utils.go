@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/clo-ru/cloapi-go-client/clo"
-	"github.com/clo-ru/cloapi-go-client/clo/mocks"
+	"github.com/clo-ru/cloapi-go-client/internal/testing/mocks"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/url"
