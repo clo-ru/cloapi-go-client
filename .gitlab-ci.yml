@@ -10,7 +10,7 @@ test:
     - go fmt $(go list ./... | grep -v /vendor/)
     - go vet $(go list ./... | grep -v /vendor/)
     - go test -coverprofile=coverage.txt -covermode count $(go list ./... | grep -v /vendor/)
-    - gocover-cobertura < coverage.txt > coverage.xml
+    - $GOPATH/bin/gocover-cobertura < target/coverage/cli_coverage.out > target/coverage/cli_coverage.xml
   coverage:  '/^coverage: (\d+.\d+)% of statements$/'
 
   artifacts:
