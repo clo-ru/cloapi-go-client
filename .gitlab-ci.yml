@@ -1,4 +1,4 @@
-image: golang:latest
+image: gitlab.hoztnode.net:4598/rnd/cloru/cloapi-go-client/golang
 
 stages:
   - test
