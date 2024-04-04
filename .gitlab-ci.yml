@@ -10,4 +10,4 @@ test:
     - go vet $(go list ./... | grep -v /vendor/)
     - go test -race -v -cover -coverprofile=profile.cov $(go list ./... | grep -v /vendor/)
     - go tool cover -func profile.cov
-  coverage:  '\(statements\)(?:\s+)?(\d+(?:\.\d+)?%)'
+  coverage:  '/\(statements\)(?:\s+)?(\d+(?:\.\d+)?%)/'
