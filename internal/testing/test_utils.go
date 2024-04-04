@@ -125,13 +125,12 @@ func ConcurrentRetryTest(request clo.RequestInt, t *testing.T) {
 	}
 	cli.HttpClient = &httpCli
 	mocks.BodyStringFunc = func() (string, int) { return "", erCode }
-
+	request.WithRetry(retry, 0)
 	wg := sync.WaitGroup{}
 	for n := 0; n < grNum; n++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			request.WithRetry(retry, 0)
 			cli.DoRequest(context.Background(), request, nil)
 		}()
 	}
