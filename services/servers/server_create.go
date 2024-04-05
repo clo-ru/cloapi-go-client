@@ -26,7 +26,7 @@ type ServerCreateBody struct {
 	Flavor       ServerFlavorBody      `json:"flavor"`
 	Storages     []ServerStorageBody   `json:"storages,omitempty"`
 	Licenses     []ServerLicenseBody   `json:"licenses,omitempty"`
-	Addresses    []ServerAddressesBody `json:"addresses"`
+	Addresses    []ServerAddressesBody `json:"addresses,omitempty"`
 	Keypairs     []string              `json:"keypairs,omitempty"`
 }
 
@@ -52,7 +52,7 @@ type ServerLicenseBody struct {
 type ServerStorageBody struct {
 	Size        int    `json:"size"`
 	Bootable    bool   `json:"bootable"`
-	StorageType string `json:"storage_type"`
+	StorageType string `json:"storage_type,omitempty"`
 }
 
 func (r *ServerCreateRequest) Do(ctx context.Context, cli *clo.ApiClient) (*clo.ResponseCreated, error) {
