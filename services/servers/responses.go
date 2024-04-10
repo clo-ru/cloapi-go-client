@@ -21,14 +21,15 @@ type Server struct {
 	Snapshots      []string      `json:"snapshots"`
 }
 
-type ServerImage struct {
+type ServerRecipe struct {
 	MinDisk  int    `json:"min_disk"`
 	MinRam   int    `json:"min_ram"`
 	MinVcpus int    `json:"min_vcpus"`
 	Name     string `json:"name"`
+	Status   string `json:"status"`
 }
 
-type ServerRecipe struct {
+type ServerImage struct {
 	MinDisk         int           `json:"min_disk"`
 	MinRam          int           `json:"min_ram"`
 	OperationSystem *ServerSystem `json:"operation_system"`
