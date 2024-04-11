@@ -12,7 +12,7 @@ type Server struct {
 	PrimaryAddress string        `json:"primary_address"`
 	Project        string        `json:"project"`
 	GuestAgent     bool          `json:"guest_agent"`
-	AdminKey       bool          `json:"admin_key_status"`
+	AdminKey       string        `json:"admin_key_status"`
 	Flavor         ServerFlavor  `json:"flavor"`
 	Image          *ServerImage  `json:"image"`
 	Recipe         *ServerRecipe `json:"recipe"`
