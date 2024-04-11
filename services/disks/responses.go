@@ -17,7 +17,7 @@ type Volume struct {
 	ID           string          `json:"id"`
 	Name         string          `json:"name"`
 	Status       string          `json:"status"`
-	Size         string          `json:"size"`
+	Size         int             `json:"size"`
 	FileSystem   string          `json:"file_system"`
 	Description  string          `json:"description"`
 	CreatedIn    string          `json:"created_in"`

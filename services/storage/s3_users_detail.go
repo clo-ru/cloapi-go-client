@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	s3UserDetailEndpoint = "%s/v2/s3/users/%s"
+	s3UserDetailEndpoint = "%s/v2/s3/users/%s/detail"
 )
 
 type S3UserDetailRequest struct {

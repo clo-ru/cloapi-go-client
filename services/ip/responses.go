@@ -9,7 +9,7 @@ type Address struct {
 	Ptr            string             `json:"ptr"`
 	Type           string             `json:"type"`
 	Status         string             `json:"status"`
-	Version        string             `json:"version"`
+	Version        int                `json:"version"`
 	CreatedIn      string             `json:"created_in"`
 	UpdatedIn      string             `json:"updated_in"`
 	Address        string             `json:"address"`
