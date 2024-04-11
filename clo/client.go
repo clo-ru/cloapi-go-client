@@ -1,6 +1,7 @@
 package clo
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -100,7 +101,12 @@ func (cli *ApiClient) parseErrorResponse(resp *http.Response) error {
 	case err == io.EOF:
 		return fmt.Errorf("error with an empty body, status code is : %d", resp.StatusCode)
 	case err != nil:
-		return fmt.Errorf("can't decode an error body: %v", resp.Body)
+		var b bytes.Buffer
+		str := "<FAIL TO READ>"
+		if _, err := b.ReadFrom(resp.Body); err != nil {
+			str = b.String()
+		}
+		return fmt.Errorf("can't decode an error body: %s", str)
 	}
 	return de
 }
