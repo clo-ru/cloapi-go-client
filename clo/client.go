@@ -93,6 +93,7 @@ func (cli *ApiClient) parseResponse(resp *http.Response, dst ResponseInterface) 
 
 func (cli *ApiClient) parseErrorResponse(resp *http.Response) error {
 	var de request_tools.DefaultError
+	de.Code = resp.StatusCode
 	defer resp.Body.Close()
 	err := json.NewDecoder(resp.Body).Decode(&de)
 	switch {
