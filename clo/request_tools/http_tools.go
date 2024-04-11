@@ -9,7 +9,7 @@ import (
 
 func IsError(statusCode int) bool {
 	switch statusCode {
-	case http.StatusOK, http.StatusAccepted, http.StatusCreated, http.StatusNotFound, http.StatusNoContent:
+	case http.StatusOK, http.StatusAccepted, http.StatusCreated, http.StatusNoContent:
 		return false
 	default:
 		return true
