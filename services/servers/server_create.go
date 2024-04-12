@@ -31,7 +31,7 @@ type ServerCreateBody struct {
 }
 
 type ServerAddressesBody struct {
-	External       bool   `json:"external,omitempty"`
+	External       bool   `json:"external"`
 	DdosProtection bool   `json:"ddos_protection,omitempty"`
 	AddressId      string `json:"address_id,omitempty"`
 	MaxBandwidth   int    `json:"bandwidth_max_mbps,omitempty"`
