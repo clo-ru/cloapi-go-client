@@ -1,0 +1,126 @@
+type ClientWithResponses struct {
+    ClientInterface
+}
+
+func NewClientWithResponses(server string, opts ...ClientOption) (*ClientWithResponses, error) {
+    client, err := NewClient(server, opts...)
+    if err != nil {
+        return nil, err
+    }
+    return &ClientWithResponses{client}, nil
+}
+
+type ClientWithResponsesInterface interface {
+{{range . -}}
+    {{$opid := .OperationId -}}
+    {{- $bodyType := "" -}}
+    {{- if .HasBody -}}
+        {{- range .Bodies -}}
+            {{- if or (eq .ContentType "application/json") (eq .ContentType "application/vnd.api+json") -}}
+                {{- $bodyType = printf "%sJSONRequestBody" $opid -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if eq $bodyType "" -}}{{- $bodyType = "io.Reader" -}}{{- end -}}
+    {{- end -}}
+
+    {{.OperationId}}WithResponse(ctx context.Context{{genParamArgs .PathParams}}{{if .RequiresParamObject}}, params *{{.OperationId}}Params{{end}}{{if .HasBody}}, body {{$bodyType}}{{end}}, reqEditors ...RequestEditorFn) (*{{.OperationId}}Response, error)
+{{end}}
+}
+
+{{range .}}
+{{$opid := .OperationId}}
+{{- $bodyType := "" -}}
+{{- if .HasBody -}}
+    {{- range .Bodies -}}
+        {{- if or (eq .ContentType "application/json") (eq .ContentType "application/vnd.api+json") -}}
+            {{- $bodyType = printf "%sJSONRequestBody" $opid -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if eq $bodyType "" -}}{{- $bodyType = "io.Reader" -}}{{- end -}}
+{{- end -}}
+
+{{- $resultType := "" -}}
+{{- range .Responses -}}
+    {{- if or (eq .StatusCode "200") (eq .StatusCode "201") (eq .StatusCode "202") (eq .StatusCode "204") -}}
+        {{- range .Contents -}}
+            {{- if or (eq .ContentType "application/json") (eq .ContentType "application/vnd.api+json") -}}
+                {{- if eq $resultType "" -}}
+                    {{- $resultType = .Schema.TypeDecl -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+func (c *ClientWithResponses) {{$opid}}WithResponse(ctx context.Context{{genParamArgs .PathParams}}{{if .RequiresParamObject}}, params *{{.OperationId}}Params{{end}}{{if .HasBody}}, body {{$bodyType}}{{end}}, reqEditors ...RequestEditorFn) (*{{$opid}}Response, error) {
+    rsp, err := c.{{$opid}}(ctx{{genParamNames .PathParams}}{{if .RequiresParamObject}}, params{{end}}{{if .HasBody}}, body{{end}}, reqEditors...)
+    if err != nil {
+        return nil, err
+    }
+    return Parse{{$opid}}Response(rsp)
+}
+
+type {{$opid}}Response struct {
+    Body         []byte
+    HTTPResponse *http.Response
+    {{- if ne $resultType "" }}
+    OK           *{{$resultType}}
+    {{- end}}
+    Error        *ApiError
+}
+
+func (r {{$opid}}Response) StatusCode() int {
+    if r.HTTPResponse != nil {
+        return r.HTTPResponse.StatusCode
+    }
+    return 0
+}
+
+// Parse{{$opid}}Response parses an HTTP response. On a non-2xx status it populates
+// the Error field AND returns it as the error, so callers can use the idiomatic
+// `resp, err := ...WithResponse(...); if cloapi.IsNotFound(err) { ... }` pattern.
+func Parse{{$opid}}Response(rsp *http.Response) (*{{$opid}}Response, error) {
+    bodyBytes, err := io.ReadAll(rsp.Body)
+    defer func() { _ = rsp.Body.Close() }()
+    if err != nil {
+        return nil, err
+    }
+
+    response := &{{$opid}}Response{
+        Body:         bodyBytes,
+        HTTPResponse: rsp,
+    }
+
+    status := rsp.StatusCode
+    contentType := rsp.Header.Get("Content-Type")
+
+    if status >= 400 {
+        // Seed Code with the HTTP status; a "code" field in the body overrides it.
+        // This mirrors the v2 DefaultError semantics that consumers classify on.
+        apiErr := &ApiError{Code: status}
+        if strings.Contains(contentType, "json") {
+            if e := json.Unmarshal(bodyBytes, apiErr); e != nil {
+                apiErr = &ApiError{
+                    Message:     "failed to unmarshal error response",
+                    Description: string(bodyBytes),
+                    Code:        status,
+                }
+            }
+        } else {
+            apiErr.Message = string(bodyBytes)
+        }
+        response.Error = apiErr
+        return response, apiErr
+    }
+
+    {{- if ne $resultType "" }}
+    if strings.Contains(contentType, "json") && status >= 200 && status < 300 && len(bodyBytes) > 0 {
+        if err := json.Unmarshal(bodyBytes, &response.OK); err != nil {
+            return nil, fmt.Errorf("failed to unmarshal success response: %w", err)
+        }
+    }
+    {{- end }}
+
+    return response, nil
+}
+{{end}}

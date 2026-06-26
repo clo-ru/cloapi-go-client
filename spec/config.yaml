@@ -1,0 +1,8 @@
+package: cloapi
+generate:
+  models: true          # Go structs for all schemas
+  client: true          # HTTP request functions
+output: clo_gen.go
+output-options:
+  user-templates:
+    client-with-responses.tmpl: templates/client-with-responses.tmpl
