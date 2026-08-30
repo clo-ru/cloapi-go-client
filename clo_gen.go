@@ -502,133 +502,133 @@ type Dependendcies struct {
 	Value        int `json:"value"`
 }
 
-// DetailedAccountBalanceSchemaD365a668 defines model for DetailedAccountBalanceSchema_d365a668.
-type DetailedAccountBalanceSchemaD365a668 struct {
+// DetailedAccountBalanceSchemaEf20a2b2 defines model for DetailedAccountBalanceSchema_ef20a2b2.
+type DetailedAccountBalanceSchemaEf20a2b2 struct {
 	Result *AccountBalanceSchema `json:"result,omitempty"`
 }
 
-// DetailedBackupDownloadUrlSchema6085cb3b defines model for DetailedBackupDownloadUrlSchema_6085cb3b.
-type DetailedBackupDownloadUrlSchema6085cb3b struct {
+// DetailedBackupDownloadUrlSchema81e3c8fc defines model for DetailedBackupDownloadUrlSchema_81e3c8fc.
+type DetailedBackupDownloadUrlSchema81e3c8fc struct {
 	Result *BackupDownloadUrlSchema `json:"result,omitempty"`
 }
 
-// DetailedDbaasBackupSchema3ba4a44d defines model for DetailedDbaasBackupSchema_3ba4a44d.
-type DetailedDbaasBackupSchema3ba4a44d struct {
+// DetailedDbaasBackupSchemaB9db4f61 defines model for DetailedDbaasBackupSchema_b9db4f61.
+type DetailedDbaasBackupSchemaB9db4f61 struct {
 	Result *DbaasBackupSchema `json:"result,omitempty"`
 }
 
-// DetailedDbaasClusterConfigSchema57b48bab defines model for DetailedDbaasClusterConfigSchema_57b48bab.
-type DetailedDbaasClusterConfigSchema57b48bab struct {
+// DetailedDbaasClusterConfigSchema17b397f9 defines model for DetailedDbaasClusterConfigSchema_17b397f9.
+type DetailedDbaasClusterConfigSchema17b397f9 struct {
 	Result *DbaasClusterConfigSchema `json:"result,omitempty"`
 }
 
-// DetailedDbaasClusterSchema35c8f283 defines model for DetailedDbaasClusterSchema_35c8f283.
-type DetailedDbaasClusterSchema35c8f283 struct {
+// DetailedDbaasClusterSchemaD43b5cf7 defines model for DetailedDbaasClusterSchema_d43b5cf7.
+type DetailedDbaasClusterSchemaD43b5cf7 struct {
 	Result *DbaasClusterSchema `json:"result,omitempty"`
 }
 
-// DetailedDbaasDatababaseSchemaCea0c71a defines model for DetailedDbaasDatababaseSchema_cea0c71a.
-type DetailedDbaasDatababaseSchemaCea0c71a struct {
+// DetailedDbaasDatababaseSchema8d401d30 defines model for DetailedDbaasDatababaseSchema_8d401d30.
+type DetailedDbaasDatababaseSchema8d401d30 struct {
 	Result *DbaasDatababaseSchema `json:"result,omitempty"`
 }
 
-// DetailedGenerateKeyPairResultSchema25d7f0a4 defines model for DetailedGenerateKeyPairResultSchema_25d7f0a4.
-type DetailedGenerateKeyPairResultSchema25d7f0a4 struct {
+// DetailedGenerateKeyPairResultSchema02c38a25 defines model for DetailedGenerateKeyPairResultSchema_02c38a25.
+type DetailedGenerateKeyPairResultSchema02c38a25 struct {
 	Result *GenerateKeyPairResultSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchema22bf5ae4 defines model for DetailedIdResponseSchema_22bf5ae4.
-type DetailedIdResponseSchema22bf5ae4 struct {
+// DetailedIdResponseSchema00fe1374 defines model for DetailedIdResponseSchema_00fe1374.
+type DetailedIdResponseSchema00fe1374 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchema28f4396a defines model for DetailedIdResponseSchema_28f4396a.
-type DetailedIdResponseSchema28f4396a struct {
+// DetailedIdResponseSchema1855300c defines model for DetailedIdResponseSchema_1855300c.
+type DetailedIdResponseSchema1855300c struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchema365e9e71 defines model for DetailedIdResponseSchema_365e9e71.
-type DetailedIdResponseSchema365e9e71 struct {
+// DetailedIdResponseSchema33686d27 defines model for DetailedIdResponseSchema_33686d27.
+type DetailedIdResponseSchema33686d27 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchema3bf2f8ac defines model for DetailedIdResponseSchema_3bf2f8ac.
-type DetailedIdResponseSchema3bf2f8ac struct {
+// DetailedIdResponseSchema39d51919 defines model for DetailedIdResponseSchema_39d51919.
+type DetailedIdResponseSchema39d51919 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchema44ce3b8f defines model for DetailedIdResponseSchema_44ce3b8f.
-type DetailedIdResponseSchema44ce3b8f struct {
+// DetailedIdResponseSchema4355128f defines model for DetailedIdResponseSchema_4355128f.
+type DetailedIdResponseSchema4355128f struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchema8661fda0 defines model for DetailedIdResponseSchema_8661fda0.
-type DetailedIdResponseSchema8661fda0 struct {
+// DetailedIdResponseSchema46030cf5 defines model for DetailedIdResponseSchema_46030cf5.
+type DetailedIdResponseSchema46030cf5 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchemaC3ce4930 defines model for DetailedIdResponseSchema_c3ce4930.
-type DetailedIdResponseSchemaC3ce4930 struct {
+// DetailedIdResponseSchemaAece9431 defines model for DetailedIdResponseSchema_aece9431.
+type DetailedIdResponseSchemaAece9431 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchemaD37bc355 defines model for DetailedIdResponseSchema_d37bc355.
-type DetailedIdResponseSchemaD37bc355 struct {
+// DetailedIdResponseSchemaD95fb5c4 defines model for DetailedIdResponseSchema_d95fb5c4.
+type DetailedIdResponseSchemaD95fb5c4 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchemaEfd3fea4 defines model for DetailedIdResponseSchema_efd3fea4.
-type DetailedIdResponseSchemaEfd3fea4 struct {
+// DetailedIdResponseSchemaEfc52438 defines model for DetailedIdResponseSchema_efc52438.
+type DetailedIdResponseSchemaEfc52438 struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedIdResponseSchemaF98d916c defines model for DetailedIdResponseSchema_f98d916c.
-type DetailedIdResponseSchemaF98d916c struct {
+// DetailedIdResponseSchemaFd61c7ef defines model for DetailedIdResponseSchema_fd61c7ef.
+type DetailedIdResponseSchemaFd61c7ef struct {
 	Result *IdResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedKeyPairSchemaDfa3f13e defines model for DetailedKeyPairSchema_dfa3f13e.
-type DetailedKeyPairSchemaDfa3f13e struct {
+// DetailedKeyPairSchema30cdbb1b defines model for DetailedKeyPairSchema_30cdbb1b.
+type DetailedKeyPairSchema30cdbb1b struct {
 	Result *KeyPairSchema `json:"result,omitempty"`
 }
 
-// DetailedLBDetailResponseSchema667f2f71 defines model for DetailedLBDetailResponseSchema_667f2f71.
-type DetailedLBDetailResponseSchema667f2f71 struct {
+// DetailedLBDetailResponseSchema8af29e77 defines model for DetailedLBDetailResponseSchema_8af29e77.
+type DetailedLBDetailResponseSchema8af29e77 struct {
 	Result *LBDetailResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedLbStatSchema04acfe4d defines model for DetailedLbStatSchema_04acfe4d.
-type DetailedLbStatSchema04acfe4d struct {
+// DetailedLbStatSchema7abfb18f defines model for DetailedLbStatSchema_7abfb18f.
+type DetailedLbStatSchema7abfb18f struct {
 	Result *LbStatSchema `json:"result,omitempty"`
 }
 
-// DetailedLicenseSchemaA63babb0 defines model for DetailedLicenseSchema_a63babb0.
-type DetailedLicenseSchemaA63babb0 struct {
+// DetailedLicenseSchema929ca5a1 defines model for DetailedLicenseSchema_929ca5a1.
+type DetailedLicenseSchema929ca5a1 struct {
 	Result *LicenseSchema `json:"result,omitempty"`
 }
 
-// DetailedProjectDetailSchemaD8771e26 defines model for DetailedProjectDetailSchema_d8771e26.
-type DetailedProjectDetailSchemaD8771e26 struct {
+// DetailedProjectDetailSchema8dee7d25 defines model for DetailedProjectDetailSchema_8dee7d25.
+type DetailedProjectDetailSchema8dee7d25 struct {
 	Result *ProjectDetailSchema `json:"result,omitempty"`
 }
 
-// DetailedRuleDetailResponseSchemaD554d63c defines model for DetailedRuleDetailResponseSchema_d554d63c.
-type DetailedRuleDetailResponseSchemaD554d63c struct {
+// DetailedRuleDetailResponseSchema71b49a15 defines model for DetailedRuleDetailResponseSchema_71b49a15.
+type DetailedRuleDetailResponseSchema71b49a15 struct {
 	Result *RuleDetailResponseSchema `json:"result,omitempty"`
 }
 
-// DetailedS3UserCreateKeysSchema84a6a168 defines model for DetailedS3UserCreateKeysSchema_84a6a168.
-type DetailedS3UserCreateKeysSchema84a6a168 struct {
+// DetailedS3UserCreateKeysSchemaDa43b28a defines model for DetailedS3UserCreateKeysSchema_da43b28a.
+type DetailedS3UserCreateKeysSchemaDa43b28a struct {
 	Result *S3UserCreateKeysSchema `json:"result,omitempty"`
 }
 
-// DetailedS3UserKeysSchema721eb4de defines model for DetailedS3UserKeysSchema_721eb4de.
-type DetailedS3UserKeysSchema721eb4de struct {
+// DetailedS3UserKeysSchemaE41b095c defines model for DetailedS3UserKeysSchema_e41b095c.
+type DetailedS3UserKeysSchemaE41b095c struct {
 	Result *S3UserKeysSchema `json:"result,omitempty"`
 }
 
-// DetailedS3UserSchema7db8212a defines model for DetailedS3UserSchema_7db8212a.
-type DetailedS3UserSchema7db8212a struct {
+// DetailedS3UserSchemaA4553755 defines model for DetailedS3UserSchema_a4553755.
+type DetailedS3UserSchemaA4553755 struct {
 	Result *S3UserSchema `json:"result,omitempty"`
 }
 
@@ -749,74 +749,74 @@ type LimitSchema struct {
 // LimitType An enumeration.
 type LimitType string
 
-// ListDatastoreSchemaB3547f22 defines model for ListDatastoreSchema_b3547f22.
-type ListDatastoreSchemaB3547f22 struct {
+// ListDatastoreSchema7156f194 defines model for ListDatastoreSchema_7156f194.
+type ListDatastoreSchema7156f194 struct {
 	Count  int                `json:"count"`
 	Result *[]DatastoreSchema `json:"result,omitempty"`
 }
 
-// ListDbaasBackupSchemaE27ad93f defines model for ListDbaasBackupSchema_e27ad93f.
-type ListDbaasBackupSchemaE27ad93f struct {
+// ListDbaasBackupSchema5c9c6a15 defines model for ListDbaasBackupSchema_5c9c6a15.
+type ListDbaasBackupSchema5c9c6a15 struct {
 	Count  int                  `json:"count"`
 	Result *[]DbaasBackupSchema `json:"result,omitempty"`
 }
 
-// ListDbaasClusterSchema80218d64 defines model for ListDbaasClusterSchema_80218d64.
-type ListDbaasClusterSchema80218d64 struct {
+// ListDbaasClusterSchema5d227767 defines model for ListDbaasClusterSchema_5d227767.
+type ListDbaasClusterSchema5d227767 struct {
 	Count  int                   `json:"count"`
 	Result *[]DbaasClusterSchema `json:"result,omitempty"`
 }
 
-// ListDbaasDatababaseSchemaD9b4a73f defines model for ListDbaasDatababaseSchema_d9b4a73f.
-type ListDbaasDatababaseSchemaD9b4a73f struct {
+// ListDbaasDatababaseSchema87e978bd defines model for ListDbaasDatababaseSchema_87e978bd.
+type ListDbaasDatababaseSchema87e978bd struct {
 	Count  int                      `json:"count"`
 	Result *[]DbaasDatababaseSchema `json:"result,omitempty"`
 }
 
-// ListDbaasDatababaseSchemaDfcd1088 defines model for ListDbaasDatababaseSchema_dfcd1088.
-type ListDbaasDatababaseSchemaDfcd1088 struct {
+// ListDbaasDatababaseSchemaA2010105 defines model for ListDbaasDatababaseSchema_a2010105.
+type ListDbaasDatababaseSchemaA2010105 struct {
 	Count  int                      `json:"count"`
 	Result *[]DbaasDatababaseSchema `json:"result,omitempty"`
 }
 
-// ListDbaasNodeSchema1fe5cb89 defines model for ListDbaasNodeSchema_1fe5cb89.
-type ListDbaasNodeSchema1fe5cb89 struct {
+// ListDbaasNodeSchema0c30cf83 defines model for ListDbaasNodeSchema_0c30cf83.
+type ListDbaasNodeSchema0c30cf83 struct {
 	Count  int                `json:"count"`
 	Result *[]DbaasNodeSchema `json:"result,omitempty"`
 }
 
-// ListLBDetailResponseSchemaD2fd9468 defines model for ListLBDetailResponseSchema_d2fd9468.
-type ListLBDetailResponseSchemaD2fd9468 struct {
+// ListLBDetailResponseSchemaF74561dd defines model for ListLBDetailResponseSchema_f74561dd.
+type ListLBDetailResponseSchemaF74561dd struct {
 	Count  int                       `json:"count"`
 	Result *[]LBDetailResponseSchema `json:"result,omitempty"`
 }
 
-// ListLicenseOfferSchemaCfe63cc6 defines model for ListLicenseOfferSchema_cfe63cc6.
-type ListLicenseOfferSchemaCfe63cc6 struct {
+// ListLicenseOfferSchema8b92f1c9 defines model for ListLicenseOfferSchema_8b92f1c9.
+type ListLicenseOfferSchema8b92f1c9 struct {
 	Count  int                   `json:"count"`
 	Result *[]LicenseOfferSchema `json:"result,omitempty"`
 }
 
-// ListLicenseSchema2e7e5235 defines model for ListLicenseSchema_2e7e5235.
-type ListLicenseSchema2e7e5235 struct {
+// ListLicenseSchema68be5fd3 defines model for ListLicenseSchema_68be5fd3.
+type ListLicenseSchema68be5fd3 struct {
 	Count  int              `json:"count"`
 	Result *[]LicenseSchema `json:"result,omitempty"`
 }
 
-// ListRuleDetailResponseSchema64001eef defines model for ListRuleDetailResponseSchema_64001eef.
-type ListRuleDetailResponseSchema64001eef struct {
+// ListRuleDetailResponseSchema07fb72e2 defines model for ListRuleDetailResponseSchema_07fb72e2.
+type ListRuleDetailResponseSchema07fb72e2 struct {
 	Count  int                         `json:"count"`
 	Result *[]RuleDetailResponseSchema `json:"result,omitempty"`
 }
 
-// ListRuleDetailResponseSchemaC9ffa5b7 defines model for ListRuleDetailResponseSchema_c9ffa5b7.
-type ListRuleDetailResponseSchemaC9ffa5b7 struct {
+// ListRuleDetailResponseSchema13b51c95 defines model for ListRuleDetailResponseSchema_13b51c95.
+type ListRuleDetailResponseSchema13b51c95 struct {
 	Count  int                         `json:"count"`
 	Result *[]RuleDetailResponseSchema `json:"result,omitempty"`
 }
 
-// ListS3UserSchema8fa3a11c defines model for ListS3UserSchema_8fa3a11c.
-type ListS3UserSchema8fa3a11c struct {
+// ListS3UserSchema042945dc defines model for ListS3UserSchema_042945dc.
+type ListS3UserSchema042945dc struct {
 	Count  int             `json:"count"`
 	Result *[]S3UserSchema `json:"result,omitempty"`
 }
@@ -11191,7 +11191,7 @@ func (c *ClientWithResponses) AccountBalanceWithResponse(ctx context.Context, re
 type AccountBalanceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedAccountBalanceSchemaD365a668
+	OK           *DetailedAccountBalanceSchemaEf20a2b2
 	Error        *ApiError
 }
 
@@ -11319,7 +11319,7 @@ func (c *ClientWithResponses) DbaasBackupDetailWithResponse(ctx context.Context,
 type DbaasBackupDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedDbaasBackupSchema3ba4a44d
+	OK           *DetailedDbaasBackupSchemaB9db4f61
 	Error        *ApiError
 }
 
@@ -11386,7 +11386,7 @@ func (c *ClientWithResponses) DbaasBackupDownloadWithResponse(ctx context.Contex
 type DbaasBackupDownloadResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedBackupDownloadUrlSchema6085cb3b
+	OK           *DetailedBackupDownloadUrlSchema81e3c8fc
 	Error        *ApiError
 }
 
@@ -11514,7 +11514,7 @@ func (c *ClientWithResponses) DbaasClusterDetailWithResponse(ctx context.Context
 type DbaasClusterDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedDbaasClusterSchema35c8f283
+	OK           *DetailedDbaasClusterSchemaD43b5cf7
 	Error        *ApiError
 }
 
@@ -11648,7 +11648,7 @@ func (c *ClientWithResponses) DbaasClusterBackupWithResponse(ctx context.Context
 type DbaasClusterBackupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchema8661fda0
+	OK           *DetailedIdResponseSchema4355128f
 	Error        *ApiError
 }
 
@@ -11849,7 +11849,7 @@ func (c *ClientWithResponses) DbaasClusterConfigWithResponse(ctx context.Context
 type DbaasClusterConfigResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedDbaasClusterConfigSchema57b48bab
+	OK           *DetailedDbaasClusterConfigSchema17b397f9
 	Error        *ApiError
 }
 
@@ -11916,7 +11916,7 @@ func (c *ClientWithResponses) ClusterDbaasDatabasesListWithResponse(ctx context.
 type ClusterDbaasDatabasesListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListDbaasDatababaseSchemaD9b4a73f
+	OK           *ListDbaasDatababaseSchemaA2010105
 	Error        *ApiError
 }
 
@@ -11983,7 +11983,7 @@ func (c *ClientWithResponses) ClusterAddDatabaseWithResponse(ctx context.Context
 type ClusterAddDatabaseResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchemaC3ce4930
+	OK           *DetailedIdResponseSchema1855300c
 	Error        *ApiError
 }
 
@@ -12050,7 +12050,7 @@ func (c *ClientWithResponses) ClusterDbaasNodesListWithResponse(ctx context.Cont
 type ClusterDbaasNodesListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListDbaasNodeSchema1fe5cb89
+	OK           *ListDbaasNodeSchema0c30cf83
 	Error        *ApiError
 }
 
@@ -12446,7 +12446,7 @@ func (c *ClientWithResponses) DbaasDatabaseDetailWithResponse(ctx context.Contex
 type DbaasDatabaseDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedDbaasDatababaseSchemaCea0c71a
+	OK           *DetailedDbaasDatababaseSchema8d401d30
 	Error        *ApiError
 }
 
@@ -12513,7 +12513,7 @@ func (c *ClientWithResponses) ClusterDatabaseBackupWithResponse(ctx context.Cont
 type ClusterDatabaseBackupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchema22bf5ae4
+	OK           *DetailedIdResponseSchema39d51919
 	Error        *ApiError
 }
 
@@ -12842,7 +12842,7 @@ func (c *ClientWithResponses) KeypairDetailWithResponse(ctx context.Context, obj
 type KeypairDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedKeyPairSchemaDfa3f13e
+	OK           *DetailedKeyPairSchema30cdbb1b
 	Error        *ApiError
 }
 
@@ -12909,7 +12909,7 @@ func (c *ClientWithResponses) AvailableLicensesListWithResponse(ctx context.Cont
 type AvailableLicensesListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListLicenseOfferSchemaCfe63cc6
+	OK           *ListLicenseOfferSchema8b92f1c9
 	Error        *ApiError
 }
 
@@ -13037,7 +13037,7 @@ func (c *ClientWithResponses) LicenseDetailsWithResponse(ctx context.Context, ob
 type LicenseDetailsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedLicenseSchemaA63babb0
+	OK           *DetailedLicenseSchema929ca5a1
 	Error        *ApiError
 }
 
@@ -13433,7 +13433,7 @@ func (c *ClientWithResponses) RuleDetailWithResponse(ctx context.Context, object
 type RuleDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedRuleDetailResponseSchemaD554d63c
+	OK           *DetailedRuleDetailResponseSchema71b49a15
 	Error        *ApiError
 }
 
@@ -13695,7 +13695,7 @@ func (c *ClientWithResponses) LoadBalancerDetailWithResponse(ctx context.Context
 type LoadBalancerDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedLBDetailResponseSchema667f2f71
+	OK           *DetailedLBDetailResponseSchema8af29e77
 	Error        *ApiError
 }
 
@@ -13829,7 +13829,7 @@ func (c *ClientWithResponses) RuleListWithResponse(ctx context.Context, objectId
 type RuleListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListRuleDetailResponseSchemaC9ffa5b7
+	OK           *ListRuleDetailResponseSchema13b51c95
 	Error        *ApiError
 }
 
@@ -13896,7 +13896,7 @@ func (c *ClientWithResponses) RuleCreateWithResponse(ctx context.Context, object
 type RuleCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchema365e9e71
+	OK           *DetailedIdResponseSchema46030cf5
 	Error        *ApiError
 }
 
@@ -14030,7 +14030,7 @@ func (c *ClientWithResponses) LoadBalancerStatWithResponse(ctx context.Context, 
 type LoadBalancerStatResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedLbStatSchema04acfe4d
+	OK           *DetailedLbStatSchema7abfb18f
 	Error        *ApiError
 }
 
@@ -14365,7 +14365,7 @@ func (c *ClientWithResponses) ProjectCreateWithResponse(ctx context.Context, bod
 type ProjectCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchema44ce3b8f
+	OK           *DetailedIdResponseSchema00fe1374
 	Error        *ApiError
 }
 
@@ -14761,7 +14761,7 @@ func (c *ClientWithResponses) ProjectBackupListWithResponse(ctx context.Context,
 type ProjectBackupListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListDbaasBackupSchemaE27ad93f
+	OK           *ListDbaasBackupSchema5c9c6a15
 	Error        *ApiError
 }
 
@@ -14828,7 +14828,7 @@ func (c *ClientWithResponses) DbaasClustersListWithResponse(ctx context.Context,
 type DbaasClustersListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListDbaasClusterSchema80218d64
+	OK           *ListDbaasClusterSchema5d227767
 	Error        *ApiError
 }
 
@@ -14895,7 +14895,7 @@ func (c *ClientWithResponses) DbaasClusterCreateWithResponse(ctx context.Context
 type DbaasClusterCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchema3bf2f8ac
+	OK           *DetailedIdResponseSchemaD95fb5c4
 	Error        *ApiError
 }
 
@@ -14962,7 +14962,7 @@ func (c *ClientWithResponses) ProjectDbaasDatabasesListWithResponse(ctx context.
 type ProjectDbaasDatabasesListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListDbaasDatababaseSchemaDfcd1088
+	OK           *ListDbaasDatababaseSchema87e978bd
 	Error        *ApiError
 }
 
@@ -15029,7 +15029,7 @@ func (c *ClientWithResponses) ProjectDbaasDatastoresWithResponse(ctx context.Con
 type ProjectDbaasDatastoresResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListDatastoreSchemaB3547f22
+	OK           *ListDatastoreSchema7156f194
 	Error        *ApiError
 }
 
@@ -15163,7 +15163,7 @@ func (c *ClientWithResponses) ProjectDetailWithResponse(ctx context.Context, obj
 type ProjectDetailResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedProjectDetailSchemaD8771e26
+	OK           *DetailedProjectDetailSchema8dee7d25
 	Error        *ApiError
 }
 
@@ -15364,7 +15364,7 @@ func (c *ClientWithResponses) ImportKeypairWithResponse(ctx context.Context, obj
 type ImportKeypairResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedKeyPairSchemaDfa3f13e
+	OK           *DetailedKeyPairSchema30cdbb1b
 	Error        *ApiError
 }
 
@@ -15431,7 +15431,7 @@ func (c *ClientWithResponses) GenerateKeypairWithResponse(ctx context.Context, o
 type GenerateKeypairResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedGenerateKeyPairResultSchema25d7f0a4
+	OK           *DetailedGenerateKeyPairResultSchema02c38a25
 	Error        *ApiError
 }
 
@@ -15632,7 +15632,7 @@ func (c *ClientWithResponses) LoadBalancerListWithResponse(ctx context.Context, 
 type LoadBalancerListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListLBDetailResponseSchemaD2fd9468
+	OK           *ListLBDetailResponseSchemaF74561dd
 	Error        *ApiError
 }
 
@@ -15699,7 +15699,7 @@ func (c *ClientWithResponses) LoadBalancerCreateWithResponse(ctx context.Context
 type LoadBalancerCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchema28f4396a
+	OK           *DetailedIdResponseSchemaFd61c7ef
 	Error        *ApiError
 }
 
@@ -15766,7 +15766,7 @@ func (c *ClientWithResponses) ProjectRuleListWithResponse(ctx context.Context, o
 type ProjectRuleListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListRuleDetailResponseSchema64001eef
+	OK           *ListRuleDetailResponseSchema07fb72e2
 	Error        *ApiError
 }
 
@@ -16101,7 +16101,7 @@ func (c *ClientWithResponses) S3UsersListWithResponse(ctx context.Context, objec
 type S3UsersListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListS3UserSchema8fa3a11c
+	OK           *ListS3UserSchema042945dc
 	Error        *ApiError
 }
 
@@ -16168,7 +16168,7 @@ func (c *ClientWithResponses) S3UserCreateWithResponse(ctx context.Context, obje
 type S3UserCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchemaD37bc355
+	OK           *DetailedIdResponseSchema33686d27
 	Error        *ApiError
 }
 
@@ -16302,7 +16302,7 @@ func (c *ClientWithResponses) ServerCreateWithResponse(ctx context.Context, obje
 type ServerCreateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchemaF98d916c
+	OK           *DetailedIdResponseSchemaAece9431
 	Error        *ApiError
 }
 
@@ -17033,7 +17033,7 @@ func (c *ClientWithResponses) S3GetUserKeysWithResponse(ctx context.Context, obj
 type S3GetUserKeysResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedS3UserKeysSchema721eb4de
+	OK           *DetailedS3UserKeysSchemaE41b095c
 	Error        *ApiError
 }
 
@@ -17100,7 +17100,7 @@ func (c *ClientWithResponses) S3GenUserKeysWithResponse(ctx context.Context, obj
 type S3GenUserKeysResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedS3UserCreateKeysSchema84a6a168
+	OK           *DetailedS3UserCreateKeysSchemaDa43b28a
 	Error        *ApiError
 }
 
@@ -17167,7 +17167,7 @@ func (c *ClientWithResponses) S3UserDetailsWithResponse(ctx context.Context, obj
 type S3UserDetailsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedS3UserSchema7db8212a
+	OK           *DetailedS3UserSchemaA4553755
 	Error        *ApiError
 }
 
@@ -17697,7 +17697,7 @@ func (c *ClientWithResponses) ServerLicensesWithResponse(ctx context.Context, ob
 type ServerLicensesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *ListLicenseSchema2e7e5235
+	OK           *ListLicenseSchema68be5fd3
 	Error        *ApiError
 }
 
@@ -17764,7 +17764,7 @@ func (c *ClientWithResponses) ServerAddLicenseWithResponse(ctx context.Context, 
 type ServerAddLicenseResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	OK           *DetailedIdResponseSchemaEfd3fea4
+	OK           *DetailedIdResponseSchemaEfc52438
 	Error        *ApiError
 }
 
